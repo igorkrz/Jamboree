@@ -1,0 +1,17 @@
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+
+### project ###
+.env.local
+/.idea
+/vendor/
+/var/cache/*
+/var/log/*
