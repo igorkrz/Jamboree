@@ -17,3 +17,5 @@
 /var/cache/*
 /var/log/*
 /docker/db/
+tools/php-cs-fixer/vendor/
+.php-cs-fixer.cache
