@@ -10,8 +10,10 @@
 ###< symfony/asset-mapper ###
 
 ### project ###
+.env
 .env.local
 /.idea
 /vendor/
 /var/cache/*
 /var/log/*
+/docker/db/
