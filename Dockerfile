@@ -85,6 +85,21 @@ ARG APP_DEBUG=1
 
 ENV PHP_TIMEZONE="Europe/Zagreb"
 
+#RUN cat /etc/passwd
+#RUN adduser 1000 1000 --disabled-password
+#RUN adduser 1000 root
+#RUN chown -R 1000.1000 /docker/*
+
+# Add a user with a specific home directory
+RUN useradd -ms /bin/bash 1000
+
+## Add the user to the sudo group (optional)
+#RUN usermod -aG sudo 1000
+
+RUN chown -R 1000:1000 docker/*
+
+USER 1000
+
 # Install xdebug and enable it if env var XDEBUG_ENABLED is set to "true"
 #RUN if [ "${XDEBUG_ENABLED}" = "true" ]; then \
 ##    pecl install xdebug-3.1.6; \
