@@ -91,14 +91,12 @@ ENV PHP_TIMEZONE="Europe/Zagreb"
 #RUN chown -R 1000.1000 /docker/*
 
 # Add a user with a specific home directory
-RUN useradd -ms /bin/bash 1000
+#RUN useradd -ms /bin/bash 1000
 
 ## Add the user to the sudo group (optional)
 #RUN usermod -aG sudo 1000
 
-RUN chown -R 1000:1000 docker/*
-
-USER 1000
+#RUN chown -R 1000:1000 docker/*
 
 # Install xdebug and enable it if env var XDEBUG_ENABLED is set to "true"
 #RUN if [ "${XDEBUG_ENABLED}" = "true" ]; then \
@@ -106,6 +104,10 @@ USER 1000
 #    docker-php-ext-enable xdebug;  \
 #    fi
 
+#USER root
+
 # Run composer
 RUN composer install; \
     rm -rf /var/www/.composer
+
+#USER 1000
