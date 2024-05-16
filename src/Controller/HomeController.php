@@ -14,15 +14,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     public function __construct(
-//        private readonly UserRepository $userRepository,
         private readonly EventRepository $eventRepository,
-    ) {}
+    ) {
+    }
 
     #[Route(path: '/', name: 'home')]
     public function indexAction(): Response
     {
-//        $users = $this->userRepository->findAll();
-
         $events = $this->eventRepository->findAll();
 
         return $this->render('home.html.twig', ['events' => $events]);

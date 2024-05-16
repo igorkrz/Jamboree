@@ -9,13 +9,13 @@ trait TimestampableTrait
 {
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: 'datetimetz', nullable: true)]
-    protected ?\DateTime $createdAt = null;
+    protected ?\DateTimeInterface $createdAt = null;
 
     #[Gedmo\Timestampable(on: 'update')]
     #[ORM\Column(type: 'datetimetz', nullable: true)]
-    protected ?\DateTime $updatedAt = null;
+    protected ?\DateTimeInterface $updatedAt = null;
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
@@ -27,7 +27,7 @@ trait TimestampableTrait
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTime
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
