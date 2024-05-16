@@ -1,0 +1,8 @@
+App\Entity\Event:
+    event_#{1..30}:
+        name: <word()>
+        description: <sentence()>
+        location: Zagreb
+        price: <randomNumber(2, true)>
+        url: https://google.com
+        holdingDate: <dateTime()>

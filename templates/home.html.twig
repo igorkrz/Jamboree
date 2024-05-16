@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <table>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.name }}</td>
+                <td>{{ event.description }}</td>
+                <td>{{ event.location }}</td>
+                <td>{{ event.price }}</td>
+                <td>{{ event.url }}</td>
+                <td>{{ event.holdingDate|date('Y-m-d H:i') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
