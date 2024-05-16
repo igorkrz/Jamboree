@@ -43,6 +43,7 @@
         "symfony/ux-turbo": "^2.17",
         "symfony/validator": "7.0.*",
         "symfony/web-link": "7.0.*",
+        "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "7.0.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
@@ -85,8 +86,13 @@
             "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",
             "vendor/bin/phpstan analyse src tests --level 7"
         ],
+        "apply-migrations": [
+            "@php bin/console doctrine:migrations:migrate --allow-no-migration --no-interaction"
+        ],
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "yarn install",
+            "yarn encore dev"
         ],
         "post-update-cmd": [
             "@auto-scripts"
