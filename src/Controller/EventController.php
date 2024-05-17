@@ -5,24 +5,22 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Repository\EventRepository;
-use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+class EventController extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
     ) {
     }
 
-    #[Route(path: '/', name: 'home')]
-    public function indexAction(): Response
+    #[Route(path: '/event/{id}', name: 'event')]
+    public function getResource(string $id): Response
     {
-        $events = $this->eventRepository->findAll();
+        $event = $this->eventRepository->find($id);
 
-        return $this->render('views/home.html.twig', ['events' => $events]);
+        return $this->render('views/single_event.html.twig', ['event' => $event]);
     }
 }

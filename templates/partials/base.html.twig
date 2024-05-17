@@ -15,11 +15,11 @@
     </head>
     <body>
         <div class="flex h-screen bg-gray-100">
-            {% include 'sidebar.html.twig' %}
+            {% include 'partials/sidebar.html.twig' %}
             {% block body %}
-                {% include 'content.html.twig' %}
+                {% include 'partials/content.html.twig' %}
             {% endblock %}
         </div>
-        {% include 'footer.html.twig' %}
+        {% include 'partials/footer.html.twig' %}
     </body>
 </html>
