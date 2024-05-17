@@ -1,0 +1,18 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block body %}
+    <table>
+        <tr>
+            <td>
+                <img src="{{ event.imageUrl }}" alt="">
+            </td>
+            <td>{{ event.internalCode }}</td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.location }}</td>
+            <td>{{ event.price }}</td>
+            <td>{{ event.url }}</td>
+            <td>{{ event.holdingDate|date('d-m-Y') }}</td>
+        </tr>
+    </table>
+{% endblock %}

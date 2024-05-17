@@ -23,6 +23,6 @@ class HomeController extends AbstractController
     {
         $events = $this->eventRepository->findAll();
 
-        return $this->render('home.html.twig', ['events' => $events]);
+        return $this->render('views/home.html.twig', ['events' => $events]);
     }
 }
