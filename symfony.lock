@@ -48,6 +48,9 @@
             "fixtures/.gitignore"
         ]
     },
+    "mark-gerarts/automapper-plus-bundle": {
+        "version": "1.5.0"
+    },
     "nelmio/alice": {
         "version": "3.13",
         "recipe": {

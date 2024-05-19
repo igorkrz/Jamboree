@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service\Scraper\Item;
 
+use App\Entity\Dto\EventDto;
+use App\Factory\EventFactory;
 use App\Service\Scraper\ItemScraperInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\RedirectionException;
 use Symfony\Component\HttpClient\Exception\ServerException;
 use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -19,14 +22,15 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 readonly class DirtyOldItemScraper implements ItemScraperInterface
 {
     public function __construct(
-        private HttpClientInterface $httpClient
+        private HttpClientInterface $httpClient,
+        private EventFactory $eventFactory,
     ) {
     }
 
     /**
-     * @return string[]
+     * @throws \ReflectionException
      */
-    public function scrape(string $url): array
+    public function scrape(string $url): EventDto
     {
         try {
             $response = $this->httpClient->request('GET', $url);
@@ -34,13 +38,24 @@ readonly class DirtyOldItemScraper implements ItemScraperInterface
             $htmlContent = $response->getContent();
             $crawler = new Crawler($htmlContent);
 
+            $resolver = new OptionsResolver();
+            $resolver->setDefaults([
+                'internalCode' => null,
+                'title' => null,
+                'description' => null,
+                'price' => null,
+                'holdingDate' => null,
+                'url' => null,
+                'imageUrl' => null,
+            ]);
+
             $image = $crawler->filter('.woocommerce-product-gallery__image > a')->link()->getUri();
 
             $event = $crawler
                 ->filter('.summary')
                 ->each(function (Crawler $node) {
                     return [
-                        'id' => $node->filter('.product_meta > .sku_wrapper >.sku')->text(),
+                        'internalCode' => $node->filter('.product_meta > .sku_wrapper >.sku')->text(),
                         'title' => $node->filter('.product_title')->text(),
                         'description' => $node->filter('.woocommerce-product-details__short-description')->text(),
                         'price' => $node->filter('.price')->text(),
@@ -60,11 +75,12 @@ readonly class DirtyOldItemScraper implements ItemScraperInterface
         preg_match($pattern, $event['description'], $matches);
 
         if (count($matches) > 0) {
-            $event['date'] = $matches[0];
+            $event['holdingDate'] = $matches[0];
         }
 
-        $event['image'] = $image;
+        $event['url'] = $url;
+        $event['imageUrl'] = $image;
 
-        return $event;
+        return $this->eventFactory->createDtoFromArray($resolver->resolve($event));
     }
 }
