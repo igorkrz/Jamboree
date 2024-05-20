@@ -9,9 +9,18 @@ use App\Entity\Event;
 use AutoMapperPlus\AutoMapperPlusBundle\AutoMapperConfiguratorInterface;
 use AutoMapperPlus\Configuration\AutoMapperConfigInterface;
 use AutoMapperPlus\MappingOperation\Operation;
+use DateTime;
 
 final class EventConfigurator implements AutoMapperConfiguratorInterface
 {
+    private const FORMATS = [
+        'd.m.',
+        'd.m.Y.',
+        'd.m.Y',
+        'd.m.y.',
+        'd.m.y',
+        'd/m/Y',
+    ];
     public function configure(AutoMapperConfigInterface $config): void
     {
         $mapping = $config->registerMapping(EventDto::class, Event::class);
@@ -30,11 +39,18 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
                 return null;
             }
 
-            try {
-                return new \DateTime($dto->holdingDate);
-            } catch (\Exception $e) {
-                return null;
+            $date = str_replace(',', '', $dto->holdingDate);
+
+            foreach (self::FORMATS as $format) {
+                $holdingDate = DateTime::createFromFormat($format, $date);
+
+                if ($holdingDate instanceof DateTime) {
+                    return $holdingDate;
+                }
             }
+
+
+            return null;
         });
     }
 }

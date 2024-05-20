@@ -41,7 +41,7 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
             $resolver = new OptionsResolver();
             $resolver->setDefaults([
                 'internalCode' => null,
-                'title' => null,
+                'name' => null,
                 'description' => null,
                 'price' => null,
                 'holdingDate' => null,
@@ -56,7 +56,7 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
                 ->each(function (Crawler $node) {
                     return [
                         'internalCode' => $node->filter('.product_meta > .sku_wrapper >.sku')->text(),
-                        'title' => $node->filter('.product_title')->text(),
+                        'name' => $node->filter('.product_title')->text(),
                         'description' => $node->filter('.woocommerce-product-details__short-description')->text(),
                         'price' => $node->filter('.price')->text(),
                     ];
@@ -71,7 +71,7 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
             throw new TransportException($e->getMessage());
         }
 
-        $pattern = '/\b(\d{1,2}\.\d{1,2}\.\d{4})\b|\b(\d{4}-\d{2}-\d{2})\b|\b(\d{1,2}\/\d{1,2}\/\d{4})\b|\b(\d{1,2}-\d{1,2}-\d{4})\b/';
+        $pattern = '/\b(\d{1,2}\.\d{1,2}\.\d{4}|\d{1,2}\.\d{1,2}\.\d{2}|\d{1,2}\.\d{1,2}\.),?|\b(\d{4}-\d{2}-\d{2})\b,?|\b(\d{1,2}\/\d{1,2}\/\d{4})\b,?|\b(\d{1,2}-\d{1,2}-\d{4})\b,?/';
         preg_match($pattern, $event['description'], $matches);
 
         if (count($matches) > 0) {
