@@ -16,7 +16,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class DirtyOldListScraper implements ListScraperInterface
+final class DirtyOldListScraper implements ListScraperInterface
 {
     private const URL = 'https://www.dirtyoldempire.com/en/product-category/karte-en/' ;
 
