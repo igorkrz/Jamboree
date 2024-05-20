@@ -58,7 +58,7 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
                         'internalCode' => $node->filter('.product_meta > .sku_wrapper >.sku')->text(),
                         'name' => $node->filter('.product_title')->text(),
                         'description' => $node->filter('.woocommerce-product-details__short-description')->text(),
-                        'price' => $node->filter('.price')->text(),
+                        'price' => (int) $node->filter('.price')->text(),
                     ];
                 })[0];
         } catch (ClientExceptionInterface $e) {
