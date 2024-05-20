@@ -14,4 +14,6 @@ interface FactoryInterface
      * @param string[] $resolvedData
      */
     public function createDtoFromArray(array $resolvedData): object;
+
+    public function mapToExistingObject(object $source, object $destination): object;
 }

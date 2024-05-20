@@ -18,7 +18,7 @@ readonly class EventFactory extends BaseFactory
         private AutoMapperInterface $mapper,
         private PropertyAccessorInterface $propertyAccessor,
     ) {
-        parent::__construct($this->propertyAccessor);
+        parent::__construct($this->propertyAccessor, $this->mapper);
     }
 
     public function create(): Event

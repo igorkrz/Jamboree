@@ -19,7 +19,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-readonly class DirtyOldItemScraper implements ItemScraperInterface
+final readonly class DirtyOldItemScraper implements ItemScraperInterface
 {
     public function __construct(
         private HttpClientInterface $httpClient,
