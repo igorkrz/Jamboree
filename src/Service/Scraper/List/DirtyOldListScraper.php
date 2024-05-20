@@ -40,7 +40,7 @@ final class DirtyOldListScraper implements ListScraperInterface
                 ->filter('.product')
                 ->each(function (Crawler $node) {
                     return [
-                        'title' => $node->filter('.woocommerce-loop-product__title')->text(),
+                        'name' => $node->filter('.woocommerce-loop-product__title')->text(),
                         'price' => $node->filter('.price')->text(),
                         'url' => $node->filter('.woocommerce-loop-product__link')->link()->getUri(),
                     ];
