@@ -8,6 +8,8 @@ use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,9 +35,17 @@ class User implements ResourceInterface, TimestampableInterface
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $lastName = null;
 
+    /**
+     * @var Collection<int|string, UserEvent>
+     */
+    #[ORM\OneToMany(targetEntity: UserEvent::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'user_event')]
+    protected Collection $events;
+
     public function __construct(Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): Ulid
@@ -92,5 +102,41 @@ class User implements ResourceInterface, TimestampableInterface
         }
 
         return $fullName === '' ? null : $fullName;
+    }
+
+    /**
+     * @return Collection<int|string, UserEvent>
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function hasEvent(UserEvent $userEvent): ?string
+    {
+        if ($this->events->containsKey($userEvent->getId()->toRfc4122())) {
+            return $userEvent->getId()->toRfc4122();
+        }
+
+        return null;
+    }
+
+    public function addEvent(UserEvent $userEvent): static
+    {
+        if (!$this->hasEvent($userEvent)) {
+            $this->events->add($userEvent);
+            $userEvent->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(UserEvent $userEvent): static
+    {
+        if ($this->hasEvent($userEvent)) {
+            $this->events->removeElement($userEvent);
+        }
+
+        return $this;
     }
 }
