@@ -11,12 +11,16 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-class User implements ResourceInterface, TimestampableInterface
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class User implements ResourceInterface, TimestampableInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableTrait;
 
@@ -34,6 +38,16 @@ class User implements ResourceInterface, TimestampableInterface
 
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $lastName = null;
+
+    #[ORM\Column(type: 'boolean')]
+    protected bool $isVerified = false;
+
+    #[ORM\Column(type: 'string')]
+    protected ?string $password = null;
+
+    /** @var string[] */
+    #[ORM\Column(type: 'json')]
+    protected array $roles = [];
 
     /**
      * @var Collection<int|string, UserEvent>
@@ -104,6 +118,18 @@ class User implements ResourceInterface, TimestampableInterface
         return $fullName === '' ? null : $fullName;
     }
 
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int|string, UserEvent>
      */
@@ -112,18 +138,33 @@ class User implements ResourceInterface, TimestampableInterface
         return $this->events;
     }
 
-    public function hasEvent(UserEvent $userEvent): ?string
+    public function hasEvent(Event $event): bool
     {
-        if ($this->events->containsKey($userEvent->getId()->toRfc4122())) {
-            return $userEvent->getId()->toRfc4122();
+        foreach ($this->getEvents() as $userEvent) {
+            if ($userEvent->getEvent()->getId()->toRfc4122() === $event->getId()->toRfc4122()) {
+                return true;
+            }
         }
 
-        return null;
+        return false;
     }
 
-    public function addEvent(UserEvent $userEvent): static
+    //    public function hasUserEvent(UserEvent $userEvent): ?string
+    //    {
+    //        if ($this->events->containsKey($userEvent->getId()->toRfc4122())) {
+    //            return $userEvent->getId()->toRfc4122();
+    //        }
+    //
+    //        if ($this->events->contains($userEvent)) {
+    //            return $userEvent->getId()->toRfc4122();
+    //        }
+    //
+    //        return null;
+    //    }
+
+    public function addUserEvent(UserEvent $userEvent): static
     {
-        if (!$this->hasEvent($userEvent)) {
+        if (!$this->hasEvent($userEvent->getEvent())) {
             $this->events->add($userEvent);
             $userEvent->setUser($this);
         }
@@ -131,12 +172,57 @@ class User implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    public function removeEvent(UserEvent $userEvent): static
+    public function removeUserEvent(UserEvent $userEvent): static
     {
-        if ($this->hasEvent($userEvent)) {
+        if ($this->hasEvent($userEvent->getEvent())) {
             $this->events->removeElement($userEvent);
         }
 
         return $this;
+    }
+
+
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password = null): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param string[] $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
     }
 }
