@@ -1,0 +1,43 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block body %}
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Events</h1>
+
+        <!-- Sorting Options -->
+        <div class="mb-4">
+            {{ form_start(form, {'method': 'GET', 'attr': {'class': 'flex space-x-4', 'id': 'sort-form'}}) }}
+            {{ form_widget(form.sort, {'attr': {'class': 'form-select block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50', 'onchange': 'this.form.submit()'}}) }}
+            {{ form_end(form) }}
+        </div>
+
+        <!-- Events List -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+            <ul class="divide-y divide-gray-200">
+                {% for userEvent in userEvents %}
+                    <li class="p-4 flex items-center justify-between">
+                        <div class="flex-1">
+                            <h2 class="text-xl font-semibold"><a href="{{ path('event', {id: userEvent.getEvent.id}) }}" class="text-indigo-600 hover:text-indigo-900">{{ userEvent.event.name }}</a></h2>
+                            <p class="text-gray-500">{{ userEvent.event.description }}</p>
+                            <p class="text-gray-500">{{ userEvent.event.location }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-semibold text-indigo-600">{{ userEvent.event.price|price }}</p>
+                            <p class="text-xl font-bold text-red-500">{{ userEvent.event.holdingDate|date('d-m-Y') }}</p>
+                            <a href="{{ userEvent.event.url }}" target="_blank" class="text-indigo-600 hover:text-indigo-900">More Info</a>
+                        </div>
+                    </li>
+                        <form action="{{ path('user_event_delete',{'id': userEvent.id} )}}" method="post">
+                            <button
+                                    type="submit"
+                                    class="text-black middle none center rounded-lg py-3 px-6 font-sans text-xs font-bold uppercase shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:shadow-pink-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                                    data-ripple-light="true"
+                            >
+                                Remove event
+                            </button>
+                        </form>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

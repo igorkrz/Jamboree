@@ -12,7 +12,7 @@ use InvalidArgumentException;
 use ReflectionException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
-readonly class EventFactory extends BaseFactory
+final readonly class EventFactory extends BaseFactory
 {
     public function __construct(
         private AutoMapperInterface $mapper,
