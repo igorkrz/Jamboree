@@ -149,18 +149,18 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
         return false;
     }
 
-//    public function hasUserEvent(UserEvent $userEvent): ?string
-//    {
-//        if ($this->events->containsKey($userEvent->getId()->toRfc4122())) {
-//            return $userEvent->getId()->toRfc4122();
-//        }
-//
-//        if ($this->events->contains($userEvent)) {
-//            return $userEvent->getId()->toRfc4122();
-//        }
-//
-//        return null;
-//    }
+    //    public function hasUserEvent(UserEvent $userEvent): ?string
+    //    {
+    //        if ($this->events->containsKey($userEvent->getId()->toRfc4122())) {
+    //            return $userEvent->getId()->toRfc4122();
+    //        }
+    //
+    //        if ($this->events->contains($userEvent)) {
+    //            return $userEvent->getId()->toRfc4122();
+    //        }
+    //
+    //        return null;
+    //    }
 
     public function addUserEvent(UserEvent $userEvent): static
     {
@@ -206,6 +206,9 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
         return array_unique($roles);
     }
 
+    /**
+     * @param string[] $roles
+     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;

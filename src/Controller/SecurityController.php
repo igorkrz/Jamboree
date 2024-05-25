@@ -56,7 +56,9 @@ final class SecurityController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $this->emailVerifier->sendEmailConfirmation('verify_email', $user,
+            $this->emailVerifier->sendEmailConfirmation(
+                'verify_email',
+                $user,
                 (new TemplatedEmail())
                     ->from(new Address('mailer@jamboree.com', 'JamboreeBot'))
                     ->to($user->getEmail())

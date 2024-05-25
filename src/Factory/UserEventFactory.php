@@ -8,17 +8,17 @@ use App\Entity\UserEvent;
 
 final readonly class UserEventFactory extends BaseFactory
 {
-    public function create(): object
+    public function create(): UserEvent
     {
         return new UserEvent();
     }
 
-    public function createFromDto(object $dto): object
+    public function createFromDto(object $dto): UserEvent
     {
         return $this->create();
     }
 
-    public function createDtoFromArray(array $resolvedData): object
+    public function createDtoFromArray(array $resolvedData): UserEvent
     {
         return $this->create();
     }

@@ -117,7 +117,7 @@ final class EventController extends AbstractController
 
         $userEvents = $user->getEvents()->toArray();
 
-        $events = array_map(fn(UserEvent $userEvent) => $userEvent->getEvent(), $userEvents);
+        $events = array_map(fn (UserEvent $userEvent) => $userEvent->getEvent(), $userEvents);
 
         $form = $this->createForm(SortType::class, $events, []);
 
