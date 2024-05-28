@@ -52,6 +52,7 @@ final class ScrapeEventsCommand extends Command
         foreach ($scrapedList as $scrapedItem) {
             $dto = $this->itemScraper->scrape($scrapedItem['url']);
 
+            /** @var ?Event $event */
             $event = $this->eventRepository->findOneBy(['internalCode' => $dto->internalCode]);
 
             $event = $this->createOrUpdateEvent($dto, $event);

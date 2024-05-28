@@ -15,9 +15,9 @@ class SortType extends AbstractType
         $builder->add('sort', Type\ChoiceType::class, [
                 'placeholder' => 'Sort by',
                 'choices' => [
-                    'Date' => 'getHoldingDate',
-                    'Price' => 'getPrice',
-                    'A-Z' => 'getName'
+                    'Date' => 'holdingDate',
+                    'Price' => 'price',
+                    'A-Z' => 'name'
                 ]
             ]);
     }

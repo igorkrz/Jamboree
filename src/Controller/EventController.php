@@ -11,8 +11,12 @@ use App\Factory\UserEventFactory;
 use App\Form\SortType;
 use App\Repository\EventRepository;
 use App\Repository\UserEventRepository;
+use ArrayIterator;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,20 +37,17 @@ final class EventController extends AbstractController
     #[Route(path: '/events', name: 'events')]
     public function getList(Request $request): Response
     {
-        $events = $this->eventRepository->findAll();
+        $sortField = (string) $request->query->get('sort', 'holdingDate');
+        $sortOrder = (string) $request->query->get('order', 'ASC');
+        $page = (int) $request->query->get('page', 1);
 
-        $form = $this->createForm(SortType::class, $events, []);
+        $events = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            new QueryAdapter($this->eventRepository->getUpcomingEventsQueryBuilder($sortField, $sortOrder)),
+            $page,
+            10,
+        );
 
-        $sort = $request->get('sort');
-
-        if (isset($sort['sort'])) {
-            $events = $this->sortEvents($sort['sort'], $events);
-        }
-
-        return $this->render('views/list_event.html.twig', [
-            'events' => $events,
-            'form' => $form,
-        ]);
+        return $this->render('views/list_event.html.twig', ['events' => $events]);
     }
 
     #[Route(path: '/events/{id}', name: 'event', methods: ['GET'])]
@@ -115,34 +116,16 @@ final class EventController extends AbstractController
             return $this->redirect('/login');
         }
 
-        $userEvents = $user->getEvents()->toArray();
+        $sortField = (string) $request->query->get('sort', 'holdingDate');
+        $sortOrder = (string) $request->query->get('order', 'ASC');
+        $page = (int) $request->query->get('page', 1);
 
-        $events = array_map(fn (UserEvent $userEvent) => $userEvent->getEvent(), $userEvents);
+        $userEvents = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            new QueryAdapter($this->userEventRepository->getUpcomingEventsQueryBuilder($sortField, $sortOrder)),
+            $page,
+            10,
+        );
 
-        $form = $this->createForm(SortType::class, $events, []);
-
-        $sort = $request->get('sort');
-
-        if (isset($sort['sort'])) {
-            $events = $this->sortEvents($sort['sort'], $events);
-        }
-
-        return $this->render('views/list_user_event.html.twig', [
-            'userEvents' => $user->getEvents(),
-            'form' => $form,
-        ]);
-    }
-
-    /**
-     * @param Event[] $events
-     * @return Event[]
-     */
-    private function sortEvents(string $by, array &$events): array
-    {
-        usort($events, function (Event $event1, Event $event2) use ($by): int {
-            return $event1->$by() > $event2->$by() ? 1 : -1;
-        });
-
-        return $events;
+        return $this->render('views/list_user_event.html.twig', ['userEvents' => $userEvents]);
     }
 }
