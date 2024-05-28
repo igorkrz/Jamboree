@@ -8,7 +8,6 @@ use App\Entity\Event;
 use App\Entity\User;
 use App\Entity\UserEvent;
 use App\Factory\UserEventFactory;
-use App\Form\SortType;
 use App\Repository\EventRepository;
 use App\Repository\UserEventRepository;
 use ArrayIterator;
