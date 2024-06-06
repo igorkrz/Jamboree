@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Contract\EventInterface;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
@@ -22,13 +23,17 @@ class UserEvent implements ResourceInterface, TimestampableInterface
     #[ORM\GeneratedValue(strategy: 'NONE')]
     protected Ulid $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'events')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
     protected User $user;
 
     #[ORM\ManyToOne(targetEntity: Event::class)]
-    #[ORM\JoinColumn(name: 'event_id', referencedColumnName: 'id', nullable: false)]
-    protected Event $event;
+    #[ORM\JoinColumn(name: 'event_id', referencedColumnName: 'id', nullable: true)]
+    protected ?Event $event = null;
+
+    #[ORM\ManyToOne(targetEntity: CustomEvent::class)]
+    #[ORM\JoinColumn(name: 'custom_event_id', referencedColumnName: 'id', nullable: true, onDelete: "CASCADE")]
+    protected ?CustomEvent $customEvent = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     protected ?bool $attending = null;
@@ -55,14 +60,18 @@ class UserEvent implements ResourceInterface, TimestampableInterface
         return $this;
     }
 
-    public function getEvent(): Event
+    public function getEvent(): EventInterface
     {
-        return $this->event;
+        return $this->event ?? $this->customEvent;
     }
 
-    public function setEvent(Event $event): static
+    public function setEvent(EventInterface $event): static
     {
-        $this->event = $event;
+        match (true) {
+            $event instanceof Event => $this->event = $event,
+            $event instanceof CustomEvent => $this->customEvent = $event,
+            default => true,
+        };
 
         return $this;
     }

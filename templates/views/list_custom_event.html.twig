@@ -2,8 +2,9 @@
 
 {% block body %}
     {% include 'components/list_events.html.twig' with {
-        headerTitle: 'Events',
+        headerTitle: 'Custom events',
         view: view,
         hasAddEvent: true,
+        hasDeleteEvent: true,
     } %}
 {% endblock %}
