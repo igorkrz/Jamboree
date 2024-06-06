@@ -1,0 +1,24 @@
+<thead>
+    <tr class="border-b bg-gray-200">
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Details</th>
+        <th class="text-left text-sm font-medium text-gray-700">
+            {% include 'components/sort_icon.html.twig' with {
+                title: 'Name',
+                sortBy: 'name',
+            } %}
+        </th>
+        <th class="text-left text-sm font-medium text-gray-700">Description</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">
+            {% include 'components/sort_icon.html.twig' with {
+                title: 'Date',
+                sortBy: 'holdingDate',
+            } %}
+        </th>
+        <th class="text-left text-sm font-medium text-gray-700">
+            {% include 'components/sort_icon.html.twig' with {
+                title: 'Price',
+                sortBy: 'price',
+            } %}
+        </th>
+    </tr>
+</thead>

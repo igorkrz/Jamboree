@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Contract\EventInterface;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
@@ -138,7 +139,7 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
         return $this->events;
     }
 
-    public function hasEvent(Event $event): bool
+    public function hasEvent(EventInterface $event): bool
     {
         foreach ($this->getEvents() as $userEvent) {
             if ($userEvent->getEvent()->getId()->toRfc4122() === $event->getId()->toRfc4122()) {
@@ -148,19 +149,6 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
 
         return false;
     }
-
-    //    public function hasUserEvent(UserEvent $userEvent): ?string
-    //    {
-    //        if ($this->events->containsKey($userEvent->getId()->toRfc4122())) {
-    //            return $userEvent->getId()->toRfc4122();
-    //        }
-    //
-    //        if ($this->events->contains($userEvent)) {
-    //            return $userEvent->getId()->toRfc4122();
-    //        }
-    //
-    //        return null;
-    //    }
 
     public function addUserEvent(UserEvent $userEvent): static
     {
@@ -180,8 +168,6 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
 
         return $this;
     }
-
-
 
     public function getPassword(): ?string
     {

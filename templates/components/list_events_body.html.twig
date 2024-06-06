@@ -1,0 +1,51 @@
+<tbody data-controller="event">
+    {% for event in events %}
+        {% if userEvents is defined %}
+            {% set userEvent = event %}
+            {% set event = event.event %}
+        {% endif %}
+        <tr class="border-b button rounded-lg hover:shadow-lg shadow-md shadow-pink-500/20 transition-all" data-event-target="parent" id="{{ event.id }}">
+            <td class="px-6 py-4 text-sm text-gray-900">
+                {% include 'components/icon_button.html.twig' with {
+                    alt: 'details',
+                    asset: asset('images/MagnifyingGlass.svg'),
+                    path: path('event', {'id': event.id}),
+                } %}
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-900">{{ event.name ?? null }}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ event.description ?? null }}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ event.holdingDate|date('d-m-Y') }}</td>
+            <td class="px-6 py-4 text-sm text-gray-500">{{ event.price|price }}</td>
+            {% if hasAddEvent and not app.user.hasEvent(event) %}
+                <td class="px-6 py-4 text-sm text-gray-900">
+                    {% include 'components/button.html.twig' with {
+                        id: event.id,
+                        action: 'event#add',
+                        title: 'Add event',
+                        path: path('user_event_add',{'id': event.id}),
+                        alt: 'add',
+                        asset: asset('images/PlusCircle.svg'),
+                    } %}
+                </td>
+            {% elseif hasRemoveEvent and app.user.hasEvent(event) %}
+                <td class="px-6 py-4 text-sm text-gray-900">
+                    {% include 'components/button.html.twig' with {
+                        id: event.id,
+                        action: 'event#remove',
+                        title: 'Remove event',
+                        path: path('user_event_delete',{'id': userEvent.id}),
+                    } %}
+                </td>
+            {% elseif hasDeleteEvent %}
+                <td class="px-6 py-4 text-sm text-gray-900">
+                    {% include 'components/button.html.twig' with {
+                        id: event.id,
+                        action: 'event#remove',
+                        title: 'Delete event',
+                        path: path('custom_event_delete',{'id': event.id}),
+                    } %}
+                </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</tbody>
