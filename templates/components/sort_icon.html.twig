@@ -1,7 +1,7 @@
 <span class="cursor-pointer">{{ title }}</span>
 <button class="w-4">
     {% set order = sortField == sortBy ? (sortOrder == 'ASC' ? 'DESC' : 'ASC') : 'DESC' %}
-    <a href="{{ path('events', {
+    <a href="{{ path(sortPath, {
         sort: sortBy,
         order: order,
         page: page,
