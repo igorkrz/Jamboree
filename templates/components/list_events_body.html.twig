@@ -16,7 +16,7 @@
             <td class="px-6 py-4 text-sm text-gray-500">{{ event.description ?? null }}</td>
             <td class="px-6 py-4 text-sm text-gray-500">{{ event.holdingDate|date('d-m-Y') }}</td>
             <td class="px-6 py-4 text-sm text-gray-500">{{ event.price|price }}</td>
-            {% if hasAddEvent and not app.user.hasEvent(event) %}
+            {% if hasAddEvent and (not is_granted('ROLE_USER') or not app.user.hasEvent(event)) %}
                 <td class="px-6 py-4 text-sm text-gray-900">
                     {% include 'components/button.html.twig' with {
                         id: event.id,
@@ -24,7 +24,6 @@
                         title: 'Add event',
                         path: path('user_event_add',{'id': event.id}),
                         alt: 'add',
-                        asset: asset('images/PlusCircle.svg'),
                     } %}
                 </td>
             {% elseif hasRemoveEvent and app.user.hasEvent(event) %}

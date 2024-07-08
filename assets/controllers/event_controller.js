@@ -7,6 +7,11 @@ export default class extends Controller {
     add(event) {
         const eventToAdd = event.currentTarget;
         const path = eventToAdd.dataset.path;
+        const isAuthenticated = eventToAdd.dataset.auth;
+
+        if (!isAuthenticated) {
+            window.location.href = "/login";
+        }
 
         axios.post(path);
         eventToAdd.classList.add('hidden');
