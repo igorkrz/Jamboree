@@ -4,6 +4,7 @@
         data-ripple-light="true"
         data-action="{{ action }}"
         data-path="{{ path }}"
+        data-auth="{{ is_granted('ROLE_USER') }}"
         id="{{ id }}"
 >
     {{ title }}

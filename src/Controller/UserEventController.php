@@ -62,6 +62,9 @@ final class UserEventController extends AbstractController
         return $this->render('views/list_user_event.html.twig', [
             'userEvents' => $userEvents,
             'view' => $viewType,
+            'sortField' => $sortField,
+            'sortOrder' => $sortOrder,
+            'page' => $page,
         ]);
     }
 

@@ -5,6 +5,7 @@
             {% include 'components/sort_icon.html.twig' with {
                 title: 'Name',
                 sortBy: 'name',
+                sortPath: sortPath,
             } %}
         </th>
         <th class="text-left text-sm font-medium text-gray-700">Description</th>
@@ -12,12 +13,14 @@
             {% include 'components/sort_icon.html.twig' with {
                 title: 'Date',
                 sortBy: 'holdingDate',
+                sortPath: sortPath,
             } %}
         </th>
         <th class="text-left text-sm font-medium text-gray-700">
             {% include 'components/sort_icon.html.twig' with {
                 title: 'Price',
                 sortBy: 'price',
+                sortPath: sortPath,
             } %}
         </th>
     </tr>

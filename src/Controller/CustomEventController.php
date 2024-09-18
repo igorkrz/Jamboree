@@ -46,6 +46,9 @@ final class CustomEventController extends AbstractController
         return $this->render('views/list_custom_event.html.twig', [
             'events' => $events,
             'view' => $viewType,
+            'sortField' => $sortField,
+            'sortOrder' => $sortOrder,
+            'page' => $page,
         ]);
     }
 
