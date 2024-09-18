@@ -26,7 +26,7 @@ class EventRepository extends EntityRepository
     public function getAllUpcomingEventsQueryBuilder(string $sortField, string $order): QueryBuilder
     {
         return $this->createQueryBuilder('e')
-            ->leftJoin(CustomEvent::class, 'ce', 'WITH')
+            ->join(CustomEvent::class, 'ce', 'ON')
             ->where('e.holdingDate >= :today')
             ->orWhere('e.holdingDate is null')
             ->orWhere('ce.holdingDate >= :today')

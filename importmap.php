@@ -28,4 +28,37 @@ return [
     'axios' => [
         'version' => '1.7.2',
     ],
+    'fullcalendar' => [
+        'version' => '5.11.5',
+    ],
+    '@fullcalendar/core' => [
+        'version' => '5.11.5',
+    ],
+    'preact' => [
+        'version' => '10.12.1',
+    ],
+    'preact/compat' => [
+        'version' => '10.12.1',
+    ],
+    'preact/hooks' => [
+        'version' => '10.12.1',
+    ],
+    '@fullcalendar/daygrid' => [
+        'version' => '5.11.5',
+    ],
+    '@fullcalendar/core/index.js' => [
+        'version' => '6.1.15',
+    ],
+    '@fullcalendar/core/internal.js' => [
+        'version' => '6.1.15',
+    ],
+    '@fullcalendar/core/preact.js' => [
+        'version' => '6.1.15',
+    ],
+    '@fullcalendar/common' => [
+        'version' => '5.11.5',
+    ],
+    'tslib' => [
+        'version' => '2.6.2',
+    ],
 ];
