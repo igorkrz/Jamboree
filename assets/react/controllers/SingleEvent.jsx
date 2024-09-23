@@ -55,7 +55,13 @@ export default function SingleEvent() {
                         {event.location && (
                             <div className="mb-4 sm:mb-0">
                                 <h2 className="text-lg font-semibold text-gray-700">Location</h2>
-                                <p className="text-gray-600">{event.location}</p>
+                                {event.location.venue && (
+                                    <p className="text-gray-600">{event.location.venue}</p>
+                                )}
+
+                                {event.location.city && (
+                                    <p className="text-gray-600">{event.location.city}</p>
+                                )}
                             </div>
                         )}
 

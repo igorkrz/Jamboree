@@ -48,7 +48,13 @@ export default function Event({ event, isFavorite }) {
                 <h3 className="text-xl font-bold mb-2">{event.name}</h3>
                 <p className="text-gray-700 text-sm mb-2">{event.description}</p>
                 <p className="text-gray-600 mb-2">
-                    <strong>Location:</strong> {event.location}
+                    <strong>Provider:</strong> {event.provider.name}
+                </p>
+                <p className="text-gray-600 mb-2">
+                    <strong>Location:</strong>
+                    {event.location && (
+                        event.location.venue + ',' + event.location.city
+                    )}
                 </p>
                 <p className="text-gray-600 mb-2">
                     <strong>Date:</strong> {new Date(event.holdingDate).toLocaleDateString()}

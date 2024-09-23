@@ -28,7 +28,7 @@ use Symfony\Component\Uid\Ulid;
     operations: [
         new GetCollection(
             normalizationContext: [
-                'groups' => ['user_event_read']
+                'groups' => ['event_read']
             ],
             security: 'is_granted("ROLE_USER")',
         ),
@@ -60,12 +60,12 @@ class UserEvent implements ResourceInterface, TimestampableInterface
 
     #[ORM\ManyToOne(targetEntity: Event::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'event_id', referencedColumnName: 'id', nullable: true)]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?Event $event = null;
 
     #[ORM\ManyToOne(targetEntity: CustomEvent::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'custom_event_id', referencedColumnName: 'id', nullable: true, onDelete: "CASCADE")]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?CustomEvent $customEvent = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]

@@ -21,41 +21,42 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
-    #[Groups(['user_event_read', 'user_event_write'])]
+    #[Groups(['event_read', 'user_event_write'])]
     protected Ulid $id;
 
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $internalCode = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?string $description = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['user_event_read'])]
-    protected ?string $location = null;
-
-    #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?string $price = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?string $url = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?string $imageUrl = null;
 
     #[ORM\Column(type: 'datetimetz', nullable: true)]
-    #[Groups(['user_event_read'])]
+    #[Groups(['event_read'])]
     protected ?\DateTimeInterface $holdingDate = null;
+
+    #[ORM\ManyToOne(targetEntity: Location::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id')]
+    #[Groups(['event_read'])]
+    protected ?Location $location = null;
 
     public function __construct(Ulid $id = null)
     {
@@ -99,18 +100,6 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     public function setDescription(?string $description = null): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getLocation(): ?string
-    {
-        return $this->location;
-    }
-
-    public function setLocation(?string $location = null): static
-    {
-        $this->location = $location;
 
         return $this;
     }
@@ -159,6 +148,18 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     public function setHoldingDate(?\DateTimeInterface $holdingDate = null): static
     {
         $this->holdingDate = $holdingDate;
+
+        return $this;
+    }
+
+    public function getLocation(): ?Location
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?Location $location = null): static
+    {
+        $this->location = $location;
 
         return $this;
     }
