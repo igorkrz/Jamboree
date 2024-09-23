@@ -9,6 +9,7 @@ use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,32 +21,40 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[Groups(['user_event_read', 'user_event_write'])]
     protected Ulid $id;
 
     #[ORM\Column(type: 'string', nullable: true)]
     protected ?string $internalCode = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['user_event_read'])]
     protected ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['user_event_read'])]
     protected ?string $description = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['user_event_read'])]
     protected ?string $location = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['user_event_read'])]
     protected ?string $price = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
+    #[Groups(['user_event_read'])]
     protected ?string $url = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
+    #[Groups(['user_event_read'])]
     protected ?string $imageUrl = null;
 
     #[ORM\Column(type: 'datetimetz', nullable: true)]
+    #[Groups(['user_event_read'])]
     protected ?\DateTimeInterface $holdingDate = null;
 
     public function __construct(Ulid $id = null)

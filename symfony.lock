@@ -1,4 +1,18 @@
 {
+    "api-platform/core": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.3",
+            "ref": "74b45ac570c57eb1fbe56c984091a9ff87e18bab"
+        },
+        "files": [
+            "config/packages/api_platform.yaml",
+            "config/routes/api_platform.yaml",
+            "src/ApiResource/.gitignore"
+        ]
+    },
     "babdev/pagerfanta-bundle": {
         "version": "v4.4.0"
     },
@@ -66,6 +80,27 @@
             "config/packages/nelmio_alice.yaml"
         ]
     },
+    "nelmio/cors-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.5",
+            "ref": "6bea22e6c564fba3a1391615cada1437d0bde39c"
+        },
+        "files": [
+            "config/packages/nelmio_cors.yaml"
+        ]
+    },
+    "pentatrion/vite-bundle": {
+        "version": "7.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "6.5",
+            "ref": "3a6673f248f8fc1dd364dadfef4c5b381d1efab6"
+        }
+    },
     "phpstan/phpstan": {
         "version": "1.11",
         "recipe": {
@@ -87,21 +122,6 @@
             ".env.test",
             "phpunit.xml.dist",
             "tests/bootstrap.php"
-        ]
-    },
-    "symfony/asset-mapper": {
-        "version": "7.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "6.4",
-            "ref": "6c28c471640cc2c6e60812ebcb961c526ef8997f"
-        },
-        "files": [
-            "assets/app.js",
-            "assets/styles/app.css",
-            "config/packages/asset_mapper.yaml",
-            "importmap.php"
         ]
     },
     "symfony/brevo-mailer": {
@@ -315,8 +335,17 @@
             "ref": "0df5844274d871b37fc3816c57a768ffc60a43a5"
         }
     },
-    "symfony/ux-turbo": {
-        "version": "v2.17.0"
+    "symfony/ux-react": {
+        "version": "2.19",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.9",
+            "ref": "e970076b31d602ae6e2106cf91a82c7e1f7ddff2"
+        },
+        "files": [
+            "assets/react/controllers/Hello.jsx"
+        ]
     },
     "symfony/validator": {
         "version": "7.0",
@@ -342,9 +371,6 @@
             "config/packages/web_profiler.yaml",
             "config/routes/web_profiler.yaml"
         ]
-    },
-    "symfonycasts/tailwind-bundle": {
-        "version": "v0.5.3"
     },
     "symfonycasts/verify-email-bundle": {
         "version": "v1.17.0"

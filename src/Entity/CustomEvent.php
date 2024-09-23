@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CustomEventRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CustomEventRepository::class)]
 #[ORM\Table(name: 'custom_event')]
+#[ApiResource()]
 class CustomEvent extends AbstractEvent
 {
     #[ORM\ManyToOne(targetEntity: User::class)]

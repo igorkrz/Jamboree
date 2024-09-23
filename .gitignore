@@ -2,12 +2,6 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
-
-###> symfony/asset-mapper ###
-/public/assets/
-/assets/vendor/
-###< symfony/asset-mapper ###
-
 ### project ###
 .env
 .env.local
@@ -26,3 +20,8 @@ tools/php-cs-fixer/vendor/
 npm-debug.log
 yarn-error.log
 ###< assets ###
+
+###> pentatrion/vite-bundle ###
+/node_modules/
+/public/build/
+###< pentatrion/vite-bundle ###
