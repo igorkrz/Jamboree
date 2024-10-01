@@ -9,10 +9,6 @@ use App\Entity\Location;
 
 interface EventInterface extends ResourceInterface
 {
-    public function getInternalCode(): ?string;
-
-    public function setInternalCode(?string $internalCode = null): self;
-
     public function getName(): ?string;
 
     public function setName(?string $name = null): self;

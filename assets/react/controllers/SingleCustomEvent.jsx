@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import useAxios from "../helpers/useAxios.jsx";
 import { useParams } from "react-router-dom";
 
-export default function SingleEvent() {
+export default function SingleCustomEvent() {
     const {id} = useParams();
     const [event, setEvent] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         console.log(id);
-        useAxios.get(`/api/events/${id}`)
+        useAxios.get(`/api/custom_events/${id}`)
             .then(response => {
                 console.log(response.data);
                 setEvent(response.data);
@@ -32,18 +32,16 @@ export default function SingleEvent() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
             <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-                {event.picture ? (
-                    <img
-                        src={event.picture.filePath}
-                        alt={event.name}
-                        className="w-full h-64 object-cover"
-                    />
-                ) : (
+                {event.imageUrl ? (
                     <img
                         src={event.imageUrl}
                         alt={event.name}
                         className="w-full h-64 object-cover"
                     />
+                ) : (
+                    <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                        <p className="text-gray-500">No Image Available</p>
+                    </div>
                 )}
 
                 <div className="p-6">

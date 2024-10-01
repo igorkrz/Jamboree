@@ -10,7 +10,6 @@ use App\Factory\EventFactory;
 use App\Repository\EventRepository;
 use App\Service\Scraper\Item\DirtyOldItemScraper;
 use App\Service\Scraper\List\DirtyOldListScraper;
-use AutoMapperPlus\AutoMapperInterface;
 use AutoMapperPlus\Exception\UnregisteredMappingException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;

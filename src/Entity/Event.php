@@ -8,9 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use App\Api\Controller\CalendarController;
-use App\Api\Controller\RemoveUserEventController;
 use App\Repository\EventRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -25,24 +23,48 @@ use Symfony\Component\Serializer\Attribute\Groups;
             controller: CalendarController::class,
         ),
         new Get(),
-        new Delete(
-            uriTemplate: '/events/{id}/remove',
-            controller: RemoveUserEventController::class,
-            denormalizationContext: [
-                'groups' => ['user_event_write']
-            ],
-        )
     ],
-    normalizationContext: [
-        'groups' => ['event_read']
-    ],
+    normalizationContext: ['groups' => ['event:read']],
+    denormalizationContext: ['groups' => ['event:write']],
 )]
 class Event extends AbstractEvent
 {
+    #[ORM\Column(type: 'string', nullable: true)]
+    protected ?string $internalCode = null;
+
+    #[ORM\OneToOne(targetEntity: EventMediaObject::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'media_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Groups(['event:read'])]
+    protected ?EventMediaObject $picture = null;
+
     #[ORM\ManyToOne(targetEntity: EventProvider::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'provider_id', referencedColumnName: 'id', nullable: false)]
-    #[Groups(['event_read'])]
+    #[Groups(['event:read'])]
     protected EventProvider $provider;
+
+    public function getInternalCode(): ?string
+    {
+        return $this->internalCode;
+    }
+
+    public function setInternalCode(?string $internalCode = null): static
+    {
+        $this->internalCode = $internalCode;
+
+        return $this;
+    }
+
+    public function getPicture(): ?EventMediaObject
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?EventMediaObject $picture = null): static
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
 
     public function getProvider(): EventProvider
     {

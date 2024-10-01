@@ -11,36 +11,31 @@ import RegistrationForm from "./react/components/RegistrationForm.jsx";
 import UserEvents from "./react/controllers/UserEvents.jsx";
 import SingleEvent from "./react/controllers/SingleEvent.jsx";
 import ResourceNotAvailable from "./react/components/ResourceNotAvailable.jsx";
+import CustomEventCreate from "./react/controllers/CustomEventCreate.jsx";
+import SingleCustomEvent from "./react/controllers/SingleCustomEvent.jsx";
+import CustomEvents from "./react/controllers/CustomEvents.jsx";
+import Dashboard from "./react/controllers/Dashboard.jsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <App />,
-        // errorElement: <ResourceNotAvailable />,
         children: [{
             index: true,
-            element: <ResourceNotAvailable />,
+            element: <Dashboard />,
         },
             {
                 path: 'login/',
                 element: <LoginForm />,
-                // loader: getUsersAllLoader,
             },
             {
                 path: 'register/',
                 element: <RegistrationForm />,
-                // loader: getUsersAllLoader,
             },
             {
                 path: 'calendar/',
                 element: <Calendar />,
-                // loader: getUsersAllLoader,
             },
-            // {
-            //     path: "users/:id",
-            //     element: <UserDetails />,
-            //     loader: getUserByIdLoader
-            // },
             {
                 path: 'user_events/',
                 element: <UserEvents />
@@ -50,15 +45,27 @@ const router = createBrowserRouter([
                 element: <Events />
             },
             {
-                path: 'events/:id',
+                path: 'events/:id/',
                 element: <SingleEvent />
+            },
+            {
+                path: 'custom_events/',
+                element: <CustomEvents />
+            },
+            {
+                path: 'custom_events/:id/',
+                element: <SingleCustomEvent />
+            },
+            {
+                path: 'custom_events/create/',
+                element: <CustomEventCreate />
+            },
+            {
+                path: '*',
+                element: <ResourceNotAvailable />
             }]
     }
 ]);
-
-// ReactDOM.createRoot(document.getElementById("root")).render(
-//     <RouterProvider router={router} />
-// );
 
 const rootElement = document.getElementById('root');
 if (rootElement) {

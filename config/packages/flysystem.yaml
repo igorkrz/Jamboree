@@ -1,0 +1,21 @@
+# Read the documentation at https://github.com/thephpleague/flysystem-bundle/blob/master/docs/1-getting-started.md
+flysystem:
+    storages:
+        default.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/storage/'
+        events.storage:
+            adapter: 'gcloud'
+            options:
+                client: 'Google\Cloud\Storage\StorageClient'
+                bucket: "%env(GOOGLE_BUCKET)%"
+                prefix: "images/events"
+                visibility_handler: "flysystem.adapter.gcloud.visibility.uniform"
+        custom_events.storage:
+            adapter: 'gcloud'
+            options:
+                client: 'Google\Cloud\Storage\StorageClient'
+                bucket: "%env(GOOGLE_BUCKET)%"
+                prefix: "images/custom_events"
+                visibility_handler: "flysystem.adapter.gcloud.visibility.uniform"

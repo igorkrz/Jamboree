@@ -32,13 +32,14 @@ services:
       - "HOST_IP=${HOST_IP}"
       - "PHP_IDE_CONFIG=serverName=_"
       - "PHP_IDE_KEY=${PHP_IDE_KEY}"
+      - "GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}"
 #      - "XDEBUG_ENABLED=${XDEBUG_ENABLED}"
 
 ###> DATABASE CONTAINER ###
   database:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     ports:
-      - "5432"
+      - "32769:5432"
     environment:
       POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}

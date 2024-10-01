@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
@@ -18,11 +19,12 @@ use Symfony\Component\Uid\Ulid;
 class AccessToken implements ResourceInterface, TimestampableInterface
 {
     use TimestampableTrait;
+    use IdentifiableTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
-    private Ulid $id;
+    protected Ulid $id;
 
     #[ORM\Column(type: 'string')]
     private string $token;
@@ -46,11 +48,6 @@ class AccessToken implements ResourceInterface, TimestampableInterface
         if (!isset($this->token)) {
             $this->token = Uuid::uuid();
         }
-    }
-
-    public function getId(): Ulid
-    {
-        return $this->id;
     }
 
     public function getToken(): string

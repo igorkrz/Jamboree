@@ -22,7 +22,6 @@ final class CalendarController extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
-        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -86,29 +85,31 @@ final class CalendarController extends AbstractController
             $calendarEvent->addEvent(new Event(
                 title: $event->getEvent()->getName(),
                 start: $event->getEvent()->getHoldingDate(),
-                options: [
-                    'url' => $this->urlGenerator->generate(
-                        name: 'home',
-                        parameters: [
-                            'id' => $event->getEvent()->getId()
-                        ]
-                    ),
-                ]
+                resourceId: $event->getEvent()->getObjectIdentifier(),
+                options: ['url' => $this->resolveEventUrl($event)]
             ));
+
             return;
         }
 
         $calendarEvent->addEvent(new Event(
             title: $event->getName(),
             start: $event->getHoldingDate(),
-            options: [
-                'url' => $this->urlGenerator->generate(
-                    name: 'home',
-                    parameters: [
-                        'id' => $event->getId()
-                    ]
-                ),
-            ]
+            resourceId: $event->getObjectIdentifier(),
+            options: ['url' => $this->resolveEventUrl($event)]
         ));
+    }
+
+    private function resolveEventUrl(E\Event|E\UserEvent $event): string
+    {
+        if ($event instanceof E\Event) {
+            return '/events/' . $event->getId() . '/';
+        }
+
+        if ($event->getEvent() instanceof E\CustomEvent) {
+            return '/custom_events/' . $event->getEvent()->getId() . '/';
+        }
+
+        return '/events/' . $event->getEvent()->getId() . '/';
     }
 }

@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Entity\Contract\EventInterface;
+use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
@@ -26,6 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class User implements ResourceInterface, TimestampableInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableTrait;
+    use IdentifiableTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
@@ -63,11 +65,6 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
     {
         $this->id = $id ?? new Ulid();
         $this->events = new ArrayCollection();
-    }
-
-    public function getId(): Ulid
-    {
-        return $this->id;
     }
 
     public function getEmail(): ?string

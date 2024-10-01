@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
 use App\Repository\AccessTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -23,27 +24,24 @@ use Symfony\Component\Uid\Ulid;
 )]
 class Location implements ResourceInterface
 {
+    use IdentifiableTrait;
+
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
-    private Ulid $id;
+    protected Ulid $id;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['event_read'])]
+    #[Groups(['event:read', 'custom_event:write'])]
     private ?string $venue = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['event_read'])]
+    #[Groups(['event:read', 'custom_event:write'])]
     private ?string $city = null;
 
     public function __construct(Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
-    }
-
-    public function getId(): Ulid
-    {
-        return $this->id;
     }
 
     public function getVenue(): ?string

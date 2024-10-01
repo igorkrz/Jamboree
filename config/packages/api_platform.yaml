@@ -4,6 +4,7 @@ api_platform:
     formats:
         json: ['application/json']
         jsonld: ['application/json+ld']
+        multipart: ['multipart/form-data']
     docs_formats:
         json: ['application/json']
         jsonopenapi: ['application/vnd.openapi+json']

@@ -1,22 +1,17 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline"
-import {Link, useNavigate} from "react-router-dom";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
+import { Link } from "react-router-dom";
+import UserMenu from "./UserMenu.jsx"
 
 export default function Navigation({isLoggedIn = false}) {
-    const navigate = useNavigate();
-
     const navigation = [
         { name: 'Dashboard', href: '/', current: true },
         { name: 'Events', href: '/events', current: false },
         { name: 'My Events', href: '/user_events', current: false },
+        { name: 'Created Events', href: '/custom_events', current: false },
         { name: 'Calendar', href: '/calendar', current: false },
+        { name: 'Create Event', href: '/custom_events/create/', current: false },
     ]
-
-    function handleLogout() {
-        sessionStorage.removeItem('access_token');
-
-        navigate("/");
-    }
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
@@ -47,8 +42,7 @@ export default function Navigation({isLoggedIn = false}) {
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
                                     <Link
-                                        // key={item.name}
-                                        // href={item.href}
+                                        key={item.name}
                                         aria-current={item.current ? 'page' : undefined}
                                         className={classNames(
                                             item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
@@ -61,69 +55,17 @@ export default function Navigation({isLoggedIn = false}) {
                             </div>
                         </div>
                     </div>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        <button
-                            type="button"
-                            className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                        >
-                            <span className="absolute -inset-1.5" />
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon aria-hidden="true" className="h-6 w-6" />
-                        </button>
-
-                        {/* Profile dropdown */}
-                        {
-                            isLoggedIn ?
-                        <Menu as="div" className="relative ml-3">
-                            <div>
-                                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">Open user menu</span>
-                                    <img
-                                        alt=""
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                        className="h-8 w-8 rounded-full"
-                                    />
-                                </MenuButton>
-                            </div>
-                            <MenuItems
-                                transition
-                                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-                            >
-                                <MenuItem>
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                                        Your Profile
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                                        Settings
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a
-                                        href="/api/security/logout"
-                                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                                        onClick={handleLogout}
-                                    >
-                                        Sign out
-                                    </a>
-                                </MenuItem>
-                            </MenuItems>
-                        </Menu> :
-                                <Link
-                                    // key={item.name}
-                                    // href={item.href}
-                                    // aria-current={item.current ? 'page' : undefined}
-                                    className={classNames(
-                                        'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                        'block rounded-md px-3 py-2 text-base font-medium',
-                                    )}
-                                    to={'/login/'}>
-                                    Login
-                                </Link>
-                        }
-                    </div>
+                    {
+                        isLoggedIn ? <UserMenu /> :
+                            <Link
+                                className={classNames(
+                                    'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                    'block rounded-md px-3 py-2 text-base font-medium',
+                                )}
+                                to={'login/'}>
+                                Login
+                            </Link>
+                    }
                 </div>
             </div>
 
@@ -131,8 +73,7 @@ export default function Navigation({isLoggedIn = false}) {
                 <div className="space-y-1 px-2 pb-3 pt-2">
                     {navigation.map((item) => (
                         <Link
-                            // key={item.name}
-                            // href={item.href}
+                            key={item.name}
                             aria-current={item.current ? 'page' : undefined}
                             className={classNames(
                                 item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',

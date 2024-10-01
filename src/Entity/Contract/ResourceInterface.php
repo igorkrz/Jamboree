@@ -9,4 +9,6 @@ use Symfony\Component\Uid\Ulid;
 interface ResourceInterface
 {
     public function getId(): Ulid;
+
+    public function getObjectIdentifier(): string;
 }
