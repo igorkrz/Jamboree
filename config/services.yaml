@@ -4,6 +4,16 @@ imports:
 parameters:
     locale: 'hr'
 
+when@dev:
+    parameters:
+        public_upload_dir: '%kernel.project_dir%/public/storage'
+        public_read_dir: '/storage'
+
+when@prod:
+    parameters:
+        public_upload_dir: '%env(GOOGLE_BUCKET_URL)%'
+        public_read_dir: '%env(GOOGLE_BUCKET_URL)%'
+
 services:
     _defaults:
         autowire: true

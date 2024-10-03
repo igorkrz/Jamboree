@@ -39,7 +39,7 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
-    #[Groups(['event:read'])]
+    #[Groups(['event:read', 'custom_event:write'])]
     protected ?string $url = null;
 
     #[ORM\Column(type: 'string', nullable: true)]

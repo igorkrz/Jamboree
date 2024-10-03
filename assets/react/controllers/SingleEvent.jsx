@@ -32,19 +32,10 @@ export default function SingleEvent() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
             <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-                {event.picture ? (
-                    <img
-                        src={event.picture.filePath}
-                        alt={event.name}
-                        className="w-full h-64 object-cover"
-                    />
-                ) : (
-                    <img
-                        src={event.imageUrl}
-                        alt={event.name}
-                        className="w-full h-64 object-cover"
-                    />
-                )}
+                <img className="w-full h-64 object-cover"
+                     src={event.picture ? event.picture.filePath : event.imageUrl}
+                     alt={event.name}
+                />
 
                 <div className="p-6">
                     <h1 className="text-3xl font-bold text-gray-800 mb-4">{event.name || 'Unnamed Event'}</h1>

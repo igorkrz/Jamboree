@@ -1,0 +1,12 @@
+flysystem:
+    storages:
+        events.storage:
+            adapter: 'local'
+            visibility: 'public'
+            options:
+                directory: '%public_upload_dir%/images/events'
+        custom_events.storage:
+            adapter: 'local'
+            visibility: 'public'
+            options:
+                directory: '%public_upload_dir%/images/custom_events'

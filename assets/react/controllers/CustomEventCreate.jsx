@@ -9,26 +9,38 @@ export default function CustomEventCreate() {
         price: "",
         file: null,
         holdingDate: "",
-        venue: "",
-        city: "",
+        location: {
+            venue: "",
+            city: "",
+        },
     });
 
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [file, setFile] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleLocationChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            location: { ...formData.location, [name]: value }
+        });
+    };
+
     const handleFileChange = (e) => {
         setFormData({ ...formData, file: e.target.files[0] });
+        setFile(URL.createObjectURL(e.target.files[0]));
     };
 
     const validate = () => {
         let tempErrors = {};
         if (!formData.name) tempErrors.name = "Name is required";
-        if (!formData.price) tempErrors.price = "Price is required";
+        if (!formData.holdingDate) tempErrors.holdingDate = "Date is required";
         return tempErrors;
     };
 
@@ -41,17 +53,7 @@ export default function CustomEventCreate() {
         }
         setLoading(true);
         try {
-            const formDataToSend = new FormData();
-            formDataToSend.append("url", formData.url);
-            formDataToSend.append("name", formData.name);
-            formDataToSend.append("description", formData.description);
-            formDataToSend.append("price", formData.price);
-            formDataToSend.append("holdingDate", formData.holdingDate);
-            formDataToSend.append("venue", formData.venue);
-            formDataToSend.append("city", formData.city);
-            formDataToSend.append("file", formData.file);
-
-            await axios.post("/api/custom_events", formDataToSend, {
+            await axios.post("/api/custom_events", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -65,8 +67,10 @@ export default function CustomEventCreate() {
                 price: "",
                 file: null,
                 holdingDate: "",
-                venue: "",
-                city: "",
+                location: {
+                    venue: "",
+                    city: "",
+                },
             });
         } catch (error) {
             console.error("Error creating event:", error);
@@ -131,13 +135,8 @@ export default function CustomEventCreate() {
                         name="price"
                         value={formData.price}
                         onChange={handleChange}
-                        className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 ${
-                            errors.price ? "border-red-500" : ""
-                        }`}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
                     />
-                    {errors.price && (
-                        <p className="text-red-500 text-sm">{errors.price}</p>
-                    )}
                 </div>
 
                 <div className="mb-4">
@@ -145,12 +144,17 @@ export default function CustomEventCreate() {
                         Holding Date
                     </label>
                     <input
-                        type="datetime-local"
+                        type="date"
                         name="holdingDate"
                         value={formData.holdingDate}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                        className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 ${
+                            errors.holdingDate ? "border-red-500" : ""
+                        }`}
                     />
+                    {errors.holdingDate && (
+                        <p className="text-red-500 text-sm">{errors.holdingDate}</p>
+                    )}
                 </div>
 
                 <div className="mb-4">
@@ -160,8 +164,8 @@ export default function CustomEventCreate() {
                     <input
                         type="text"
                         name="venue"
-                        value={formData.venue}
-                        onChange={handleChange}
+                        value={formData.location.venue}
+                        onChange={handleLocationChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
                     />
                 </div>
@@ -173,8 +177,8 @@ export default function CustomEventCreate() {
                     <input
                         type="text"
                         name="city"
-                        value={formData.city}
-                        onChange={handleChange}
+                        value={formData.location.city}
+                        onChange={handleLocationChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
                     />
                 </div>
@@ -189,6 +193,12 @@ export default function CustomEventCreate() {
                         accept="image/*"
                         onChange={handleFileChange}
                         className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                    />
+                    <img
+                        src={file}
+                        width={file ? 250 : 0}
+                        height={file ? 250 : 0}
+                        alt=""
                     />
                 </div>
 

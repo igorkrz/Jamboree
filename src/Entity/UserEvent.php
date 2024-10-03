@@ -32,7 +32,7 @@ use Symfony\Component\Uid\Ulid;
         ),
         new Delete(),
     ],
-    normalizationContext: ['groups' => ['event:read']],
+    normalizationContext: ['groups' => ['custom_event:read', 'event:read']],
     denormalizationContext: ['groups' => ['user_event:write']],
 )]
 class UserEvent implements ResourceInterface, TimestampableInterface

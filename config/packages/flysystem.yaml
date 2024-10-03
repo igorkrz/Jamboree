@@ -4,7 +4,7 @@ flysystem:
         default.storage:
             adapter: 'local'
             options:
-                directory: '%kernel.project_dir%/var/storage/'
+                directory: '%public_upload_dir%'
         events.storage:
             adapter: 'gcloud'
             options:

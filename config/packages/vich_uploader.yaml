@@ -6,16 +6,15 @@ vich_uploader:
 
     mappings:
         events:
-            uri_prefix: "%env(GOOGLE_BUCKET_URL)%/images/events"
+            uri_prefix: '%public_read_dir%/images/events'
             upload_destination: events.storage
             namer:
                 service: vich_uploader.namer_property
                 options: { property: "id" }
 
         custom_events:
-            uri_prefix: "%env(GOOGLE_BUCKET_URL)%/images/custom_events"
+            uri_prefix: '%public_read_dir%/images/custom_events'
             upload_destination: custom_events.storage
-            inject_on_load: true
             namer:
                 service: vich_uploader.namer_property
                 options: { property: "id" }

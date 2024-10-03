@@ -32,17 +32,10 @@ export default function SingleCustomEvent() {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
             <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-                {event.imageUrl ? (
-                    <img
-                        src={event.imageUrl}
-                        alt={event.name}
-                        className="w-full h-64 object-cover"
-                    />
-                ) : (
-                    <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                        <p className="text-gray-500">No Image Available</p>
-                    </div>
-                )}
+                <img className="w-full h-64 object-cover"
+                     src={event.picture ? event.picture.filePath : event.imageUrl}
+                     alt={event.name}
+                />
 
                 <div className="p-6">
                     <h1 className="text-3xl font-bold text-gray-800 mb-4">{event.name || 'Unnamed Event'}</h1>

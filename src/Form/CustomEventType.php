@@ -15,14 +15,17 @@ class CustomEventType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', Type\TextType::class)
+            ->add('name', Type\TextType::class, [
+                'required' => true,
+            ])
             ->add('price', Type\NumberType::class)
             ->add('url', Type\UrlType::class)
-            ->add('holdingDate', Type\DateType::class)
-            ->add('description', Type\TextareaType::class)
-            ->add('picture', Type\FileType::class, [
-                'required' => false,
+            ->add('holdingDate', Type\DateType::class, [
+                'required' => true,
             ])
+            ->add('description', Type\TextareaType::class)
+            ->add('location', LocationType::class)
+            ->add('picture', CustomEventMediaObjectType::class)
             ->add('submit', Type\SubmitType::class);
     }
 
@@ -30,6 +33,7 @@ class CustomEventType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => CustomEvent::class,
+            'csrf_protection' => false, // Temporary
         ]);
     }
 }

@@ -11,7 +11,6 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Api\Controller\CreateCustomEventController;
-use App\Api\Controller\RemoveUserEventController;
 use App\Repository\CustomEventRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -34,10 +33,43 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                             'schema' => [
                                 'type' => 'object',
                                 'properties' => [
-                                    'file' => [
+                                    'name' => [
                                         'type' => 'string',
-                                        'format' => 'binary'
-                                    ]
+                                    ],
+                                    'url' => [
+                                        'type' => 'string',
+                                        'nullable' => true,
+                                    ],
+                                    'description' => [
+                                        'type' => 'string',
+                                        'nullable' => true,
+                                    ],
+                                    'price' => [
+                                        'type' => 'integer',
+                                        'nullable' => true,
+                                    ],
+                                    'holdingDate' => [
+                                        'type' => 'string',
+                                    ],
+                                    'picture' => [
+                                        'type' => 'string',
+                                        'format' => 'binary',
+                                        'nullable' => true,
+                                    ],
+                                    'location' => [
+                                        'type' => 'object',
+                                        'nullable' => true,
+                                        'properties' => [
+                                            'venue' => [
+                                                'type' => 'string',
+                                                'nullable' => true,
+                                            ],
+                                            'city' => [
+                                                'type' => 'string',
+                                                'nullable' => true,
+                                            ],
+                                        ],
+                                    ],
                                 ]
                             ]
                         ]
@@ -46,7 +78,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             )
         )
     ],
-    normalizationContext: ['groups' => ['event:read']],
+    normalizationContext: ['groups' => ['custom_event:read', 'event:read']],
     denormalizationContext: ['groups' => ['custom_event:write']],
 )]
 class CustomEvent extends AbstractEvent

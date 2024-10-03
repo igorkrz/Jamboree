@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[Vich\Uploadable]
 abstract class MediaObject implements ResourceInterface, TimestampableInterface
 {
     use TimestampableTrait;
@@ -28,11 +29,11 @@ abstract class MediaObject implements ResourceInterface, TimestampableInterface
     protected ?File $file = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['event:read', 'custom_event:read'])]
+    #[Groups(['event:read', 'custom_event:read', 'custom_event:write'])]
     protected ?string $fileName = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['event:read', 'custom_event:read'])]
+    #[Groups(['event:read', 'custom_event:read', 'custom_event:write'])]
     protected ?string $filePath = null;
 
     public function __construct(?Ulid $id = null)
@@ -73,7 +74,7 @@ abstract class MediaObject implements ResourceInterface, TimestampableInterface
         return $this->filePath;
     }
 
-    public function setFilePath(?string $filePath): self
+    public function setFilePath(?string $filePath = null): self
     {
         $this->filePath = $filePath;
 
