@@ -2,8 +2,13 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import { Link } from "react-router-dom";
 import UserMenu from "./UserMenu.jsx"
+import { useSelector } from "react-redux";
 
-export default function Navigation({isLoggedIn = false}) {
+export default function Navigation() {
+    const { isAuthenticated } = useSelector(
+        (state) => state.authentication
+    );
+
     const navigation = [
         { name: 'Dashboard', href: '/', current: true },
         { name: 'Events', href: '/events', current: false },
@@ -56,7 +61,7 @@ export default function Navigation({isLoggedIn = false}) {
                         </div>
                     </div>
                     {
-                        isLoggedIn ? <UserMenu /> :
+                        isAuthenticated ? <UserMenu /> :
                             <Link
                                 className={classNames(
                                     'text-gray-300 hover:bg-gray-700 hover:text-white',

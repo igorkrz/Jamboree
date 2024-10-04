@@ -1,39 +1,31 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAxios from "../helpers/useAxios.jsx";
+import useToken from "../helpers/useAxios.jsx"
+import {useDispatch, useSelector} from "react-redux";
+import {checkLogin, login} from "../../redux/reducers/authSlice";
 
 async function loginUser(credentials) {
     return useAxios.post('/api/security/login_check', {
         username: credentials.username,
         password: credentials.password,
     })
-        .then(response => response.data.access_token)
-        .catch(error => console.error(error));
-}
-
-async function grantAccessToken() {
-    return useAxios.get('/api/security/login_state')
-        .then(response => response)
+        .then(response => {
+            sessionStorage.setItem('access_token', response.data.access_token)
+        })
         .catch(error => console.error(error));
 }
 
 export default function LoginForm({setToken}) {
-    const [username, setUserName] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = await loginUser({
-            username,
-            password
-        });
-
-        console.log('TOKEN', token);
-        setToken(token);
-
-        const authorize = await grantAccessToken();
-        console.log('auth', authorize);
+        console.log('handleSubmit', e);
+        await loginUser({username, password})
 
         navigate("/");
     }
@@ -63,7 +55,7 @@ export default function LoginForm({setToken}) {
                                         className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                         type="email"
                                         placeholder="Enter your email"
-                                        onChange={e => setUserName(e.target.value)}
+                                        onChange={e => setUsername(e.target.value)}
                                     />
                                     <input
                                         className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"

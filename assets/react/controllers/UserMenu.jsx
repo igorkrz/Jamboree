@@ -1,10 +1,14 @@
-import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/react";
-import {useNavigate} from "react-router-dom";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/reducers/authSlice";
 
 export default function UserMenu() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     function handleLogout() {
+        dispatch(logout())
         sessionStorage.removeItem('access_token');
 
         navigate("/");

@@ -141,7 +141,7 @@ final class SecurityController extends AbstractController
     #[Route(path: '/api/security/login_state', name: 'api_security_login_state', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function loginState(#[CurrentUser] ?User $user, Request $request): JsonResponse
     {
-        return $this->json([$this->isGranted('ROLE_USER')]);
+        return $this->json($this->isGranted('ROLE_USER'));
     }
 
     #[Route(path: '/api/security/logout', name: 'api_security_logout', methods: [Request::METHOD_GET, Request::METHOD_POST])]
