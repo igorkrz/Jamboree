@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Event from "../components/Event.jsx";
 import useAxios from "../helpers/useAxios.jsx";
 
@@ -38,24 +38,14 @@ export default function CustomEvents() {
                 {
                     events.map((event) => {
                         console.log("EVENT", event);
-                        console.log("USER EVENTS", userEvents);
-                        // let test = userEvents.filter(function (userEvent) {
-                        //     console.log("USER EVENT", userEvent);
-                        //     if (userEvent.event) {
-                        //         console.log("USER EVENT YES", userEvent);
-                        //         return 1;
-                        //     }
-                        //
-                        //     return 0;
-                        // });
-                        let test = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
-                        console.log(test);
+                        console.log("USER EVENTS", userEvents)
+                        let favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
 
                         return <Event
                             key={event.id}
                             name={event.name}
                             event={event}
-                            isFavorite={test.length > 0}
+                            isFavorite={favoriteEvents.length > 0}
                         />
                     })
                 }

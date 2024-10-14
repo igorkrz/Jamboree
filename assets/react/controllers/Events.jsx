@@ -1,31 +1,36 @@
 import React, { useEffect, useState } from "react";
 import Event from "../components/Event.jsx";
 import useAxios from "../helpers/useAxios.jsx";
-import
+import { useSelector } from "react-redux";
 
 export default function Events() {
     const [events, setEvents] = useState([]);
     const [userEvents, setUserEvents] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const { isAuthenticated } = useSelector(
+        (state) => state.authentication
+    );
 
     useEffect(() => {
         useAxios.get(`/api/events`)
             .then(response => {
                 console.log(response.data);
                 setEvents(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-        useAxios.get(`/api/user_events`)
-            .then(response => {
-                console.log(response.data);
-                setUserEvents(response.data);
                 setLoading(false);
             })
             .catch(error => {
                 console.error(error);
             });
+        if (isAuthenticated) {
+            useAxios.get(`/api/user_events`)
+                .then(response => {
+                    console.log(response.data);
+                    setUserEvents(response.data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     }, []);
 
     if (isLoading) {
@@ -40,23 +45,18 @@ export default function Events() {
                     events.map((event) => {
                         console.log("EVENT", event);
                         console.log("USER EVENTS", userEvents);
-                        // let test = userEvents.filter(function (userEvent) {
-                        //     console.log("USER EVENT", userEvent);
-                        //     if (userEvent.event) {
-                        //         console.log("USER EVENT YES", userEvent);
-                        //         return 1;
-                        //     }
-                        //
-                        //     return 0;
-                        // });
-                        let test = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
-                        console.log(test);
+                        let favoriteEvents = [];
+
+                        if (isAuthenticated) {
+                            favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
+                        }
 
                         return <Event
                             key={event.id}
                             name={event.name}
                             event={event}
-                            isFavorite={test.length > 0}
+                            isFavorite={favoriteEvents.length > 0}
+                            isAuthenticated={isAuthenticated}
                         />
                     })
                 }

@@ -3,7 +3,7 @@ import useAxios from "../helpers/useAxios.jsx";
 import { useParams } from "react-router-dom";
 
 export default function SingleEvent() {
-    const {id} = useParams();
+    const { id } = useParams();
     const [event, setEvent] = useState([]);
     const [loading, setLoading] = useState(true);
 

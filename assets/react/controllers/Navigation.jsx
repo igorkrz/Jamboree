@@ -12,10 +12,10 @@ export default function Navigation() {
     const navigation = [
         { name: 'Dashboard', href: '/', current: true },
         { name: 'Events', href: '/events', current: false },
-        { name: 'My Events', href: '/user_events', current: false },
-        { name: 'Created Events', href: '/custom_events', current: false },
+        { name: 'My Events', href: isAuthenticated ? '/user_events' : '/login', current: false },
+        { name: 'Created Events', href: isAuthenticated ? '/custom_events' : '/login', current: false },
         { name: 'Calendar', href: '/calendar', current: false },
-        { name: 'Create Event', href: '/custom_events/create/', current: false },
+        { name: 'Create Event', href: isAuthenticated ? '/custom_events/create/' : '/login', current: false },
     ]
 
     function classNames(...classes) {

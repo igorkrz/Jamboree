@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import { HeartIcon } from "@heroicons/react/24/outline/index.js";
 import { HeartIcon as SelectedHeartIcon } from "@heroicons/react/24/solid/index.js";
 import useAxios from "../helpers/useAxios.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Event({ event, isFavorite, userEventId = null }) {
+export default function Event({ event, isFavorite, isAuthenticated = true, userEventId = null }) {
     const [isFavorited, setFavorite] = useState(isFavorite);
+    const navigate = useNavigate();
+
     const handleFavorite = () => {
+        if (!isAuthenticated) {
+            navigate("/login");
+            return;
+        }
         if (!isFavorited) {
             const iri = event.provider ?  `/api/events/${event.id}` : `/api/custom_events/${event.id}`
             console.log("favorite", event);

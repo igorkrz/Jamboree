@@ -1,16 +1,16 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./Dashboard.jsx";
-import Calendar from "./Calendar.jsx";
-import Events from "./Events.jsx";
-import UserEvents from "./UserEvents.jsx";
-import SingleEvent from "./SingleEvent.jsx";
-import CustomEventCreate from "./CustomEventCreate.jsx";
-import SingleCustomEvent from "./SingleCustomEvent.jsx";
-import CustomEvents from "./CustomEvents.jsx";
-import LoginForm from "../components/LoginForm.jsx";
-import RegistrationForm from "../components/RegistrationForm.jsx";
-import ResourceNotAvailable from "../components/ResourceNotAvailable.jsx";
+import Dashboard from "./Dashboard";
+import Calendar from "./Calendar";
+import Events from "./Events";
+import UserEvents from "./UserEvents";
+import SingleEvent from "./SingleEvent";
+import CustomEventCreate from "./CustomEventCreate";
+import SingleCustomEvent from "./SingleCustomEvent";
+import CustomEvents from "./CustomEvents";
+import LoginForm from "../components/LoginForm";
+import RegistrationForm from "../components/RegistrationForm";
+import ResourceNotAvailable from "../components/ResourceNotAvailable";
 
 export default function AppRoutes() {
     return (

@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAxios from "../helpers/useAxios.jsx";
 import useToken from "../helpers/useAxios.jsx"
-import {useDispatch, useSelector} from "react-redux";
-import {checkLogin, login} from "../../redux/reducers/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { checkLogin, login } from "../../redux/reducers/authSlice";
 
 async function loginUser(credentials) {
     return useAxios.post('/api/security/login_check', {
