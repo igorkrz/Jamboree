@@ -105,7 +105,8 @@
         "post-install-cmd": [
             "@auto-scripts",
             "yarn install",
-            "yarn run build"
+            "yarn run build",
+            "analyse-code"
         ],
         "post-update-cmd": [
             "@auto-scripts"
