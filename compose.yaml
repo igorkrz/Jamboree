@@ -2,6 +2,7 @@ version: '3'
 
 services:
   php:
+    container_name: php
     build:
       context: .
       dockerfile: Dockerfile
@@ -37,6 +38,7 @@ services:
 
 ###> DATABASE CONTAINER ###
   database:
+    container_name: database
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     ports:
       - "32769:5432"
@@ -56,6 +58,7 @@ services:
 
   # NGINX CONTAINER
   web:
+    container_name: web
     build:
       context: ./docker/nginx
     volumes:
@@ -71,6 +74,7 @@ services:
     command: nginx -g 'daemon off;'
 
   mailer:
+    container_name: mailer
     image: axllent/mailpit
     ports:
       - "1025"
