@@ -24,7 +24,11 @@ jobs:
                   envkey_TIMEZONE: ${{ secrets.TIMEZONE }}
                   envkey_HOST_IP: ${{ secrets.HOST_IP }}
                   envkey_PORT_PREFIX: ${{ secrets.PORT_PREFIX }}
+                  envkey_GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+                  envkey_GOOGLE_BUCKET: ${{ secrets.GOOGLE_BUCKET }}
+                  envkey_GOOGLE_BUCKET_URL: ${{ secrets.GOOGLE_BUCKET_URL }}
                   envkey_GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
 
             - name: Run docker-compose
               uses: hoverkraft-tech/compose-action@v2.0.1
