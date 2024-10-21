@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   php:
     container_name: php
@@ -17,24 +15,20 @@ services:
       - "./docker/php/config/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro"  ### NB: filenames other that www.conf are not effective on config merge on php-fpm start (edited)
 #      - "./docker/php/config/xdebug.ini:/usr/local/etc/php/src/xdebug.ini:ro" ### ENABLE / DISABLE XDEBUG USING .ENV FILE
       - "./:/var/www:z"
-      - "${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}"
+#      - "${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK}"
 
     shm_size: 754M
     environment:
-      - "DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@database/${DATABASE_NAME}"
-
+#      - "DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@database/${DATABASE_NAME}"
+      - "DATABASE_URL=${DATABASE_URL}"
       - "APP_SECRET=${APP_SECRET}"
       - "APP_ENV=${APP_ENV}"
-      - "APP_DEBUG=${APP_DEBUG}"
 
-      - "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
+#      - "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}"
       - "PHP_TIMEZONE=${TIMEZONE}"
 
       - "HOST_IP=${HOST_IP}"
-      - "PHP_IDE_CONFIG=serverName=_"
-      - "PHP_IDE_KEY=${PHP_IDE_KEY}"
       - "GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}"
-#      - "XDEBUG_ENABLED=${XDEBUG_ENABLED}"
 
 ###> DATABASE CONTAINER ###
   database:
