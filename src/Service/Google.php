@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service;
+
+use Google\Cloud\Storage\StorageClient;
+
+final class Google
+{
+    protected StorageClient $gsClient;
+
+    public function getStorageClient(): StorageClient
+    {
+        if (!isset($this->gsClient)) {
+            $this->gsClient = new StorageClient();
+        }
+
+        return $this->gsClient;
+    }
+}

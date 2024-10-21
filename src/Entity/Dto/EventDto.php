@@ -14,7 +14,7 @@ class EventDto
 
     public ?string $description = null;
 
-    public ?string $location = null;
+    public ?LocationDto $location = null;
 
     public ?string $price = null;
 
@@ -23,4 +23,6 @@ class EventDto
     public ?string $imageUrl = null;
 
     public ?string $holdingDate = null;
+
+    public ?string $provider = null;
 }

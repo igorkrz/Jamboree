@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity\Contract;
 
+use App\Entity\EventProvider;
+use App\Entity\Location;
+
 interface EventInterface extends ResourceInterface
 {
-    public function getInternalCode(): ?string;
-
-    public function setInternalCode(?string $internalCode = null): self;
-
     public function getName(): ?string;
 
     public function setName(?string $name = null): self;
@@ -17,10 +16,6 @@ interface EventInterface extends ResourceInterface
     public function getDescription(): ?string;
 
     public function setDescription(?string $description = null): self;
-
-    public function getLocation(): ?string;
-
-    public function setLocation(?string $location = null): self;
 
     public function getPrice(): ?string;
 
@@ -37,4 +32,8 @@ interface EventInterface extends ResourceInterface
     public function getHoldingDate(): ?\DateTimeInterface;
 
     public function setHoldingDate(?\DateTimeInterface $holdingDate = null): self;
+
+    public function getLocation(): ?Location;
+
+    public function setLocation(?Location $location = null): self;
 }

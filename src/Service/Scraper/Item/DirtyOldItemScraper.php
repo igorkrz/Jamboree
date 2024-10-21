@@ -6,7 +6,10 @@ namespace App\Service\Scraper\Item;
 
 use App\Entity\Dto\EventDto;
 use App\Factory\EventFactory;
+use App\Factory\LocationFactory;
 use App\Service\Scraper\ItemScraperInterface;
+use App\Utils\Constants;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\RedirectionException;
@@ -24,6 +27,8 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
     public function __construct(
         private HttpClientInterface $httpClient,
         private EventFactory $eventFactory,
+        private LocationFactory $locationFactory,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -47,6 +52,14 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
                 'holdingDate' => null,
                 'url' => null,
                 'imageUrl' => null,
+                'provider' => 'Dirty old shop',
+                'location' => null,
+            ]);
+
+            $locationResolver = new OptionsResolver();
+            $locationResolver->setDefaults([
+                'venue' => null,
+                'city' => null,
             ]);
 
             $image = $crawler->filter('.woocommerce-product-gallery__image > a')->link()->getUri();
@@ -71,15 +84,36 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
             throw new TransportException($e->getMessage());
         }
 
+        $location = [
+            'city' => 'Zagreb'
+        ];
+
+        $description = $event['description'];
+
         $pattern = '/\b(\d{1,2}\.\d{1,2}\.\d{4}|\d{1,2}\.\d{1,2}\.\d{2}|\d{1,2}\.\d{1,2}\.),?|\b(\d{4}-\d{2}-\d{2})\b,?|\b(\d{1,2}\/\d{1,2}\/\d{4})\b,?|\b(\d{1,2}-\d{1,2}-\d{4})\b,?/';
-        preg_match($pattern, $event['description'], $matches);
+        preg_match($pattern, $description, $matches);
 
         if (count($matches) > 0) {
             $event['holdingDate'] = $matches[0];
+
+            $datePosition = strpos($description, $matches[0]);
+            $afterDate = trim(substr($description, $datePosition + strlen($matches[0])), " \n\r\t\v\0,.");
+
+            $this->logger->info($afterDate);
+
+            $locationPattern = '/^[\p{L}\s]+(?:\s*[–-])?/u';
+            if (preg_match($locationPattern, $afterDate, $locationMatches)) {
+                $cleanedString = preg_replace('/\s*[–-]\s*$/u', '', $locationMatches[0]);
+                $location['venue'] = $cleanedString;
+                $this->logger->info($location['venue']);
+            }
         }
 
         $event['url'] = $url;
         $event['imageUrl'] = $image;
+
+        $locationDto = $this->locationFactory->createDtoFromArray($locationResolver->resolve($location));
+        $event['location'] = $locationDto;
 
         return $this->eventFactory->createDtoFromArray($resolver->resolve($event));
     }

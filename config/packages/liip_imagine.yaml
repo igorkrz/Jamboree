@@ -1,0 +1,42 @@
+liip_imagine:
+    driver: "gd"
+    loaders:
+        events:
+            flysystem:
+                filesystem_service: events.storage
+        custom_events:
+            flysystem:
+                filesystem_service: events.storage
+    resolvers:
+        events:
+            flysystem:
+                filesystem_service: events.storage
+                root_url: images/events
+                cache_prefix: cache
+                visibility: private
+        events_xs:
+            flysystem:
+                filesystem_service: events.storage
+                root_url: images/events
+                cache_prefix: xs
+                visibility: private
+        custom_events:
+            flysystem:
+                filesystem_service: custom_events.storage
+                root_url: images/custom_events
+                cache_prefix: cache
+                visibility: private
+    filter_sets:
+        events:
+            cache: events
+            data_loader: events
+        custom_events:
+            cache: custom_events
+            data_loader: custom_events
+        events_xs:
+            cache: events_xs
+            data_loader: events
+            filters:
+                fixed:
+                    width: 40
+                    height: 40

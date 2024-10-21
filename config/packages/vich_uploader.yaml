@@ -1,0 +1,20 @@
+vich_uploader:
+    db_driver: orm
+    storage: flysystem
+    metadata:
+        type: attribute
+
+    mappings:
+        events:
+            uri_prefix: '%public_read_dir%/images/events'
+            upload_destination: events.storage
+            namer:
+                service: vich_uploader.namer_property
+                options: { property: "id" }
+
+        custom_events:
+            uri_prefix: '%public_read_dir%/images/custom_events'
+            upload_destination: custom_events.storage
+            namer:
+                service: vich_uploader.namer_property
+                options: { property: "id" }

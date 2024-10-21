@@ -8,22 +8,25 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
-        users_in_memory: { memory: null }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            pattern: ^/
             lazy: true
             provider: user_provider
-            form_login:
-                login_path: login
-                check_path: login
-                enable_csrf: true
+            access_token:
+                token_handler: App\Security\AccessTokenHandler
+                token_extractors: header
+            json_login:
+                provider: user_provider
+                check_path: api_security_login_check
+                login_path: api_security_login_state
             logout:
-                path: logout
+                path: api_security_logout
                 # where to redirect after logout
-                # target: app_any_route
+                target: /
             remember_me:
                 secret: '%kernel.secret%' # required
                 lifetime: 604800 # 1 week in seconds
@@ -37,6 +40,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/security/login_check, role: PUBLIC_ACCESS }
+        - { path: ^/api/security/login_state, roles: PUBLIC_ACCESS }
         - { path: ^/user, roles: ROLE_USER }
         - { path: ^/custom_events, roles: ROLE_USER }
 #        - { path: ^/user/events/{id}, roles:}

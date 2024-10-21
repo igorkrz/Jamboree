@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Contract\EventInterface;
-use App\Entity\Contract\ResourceInterface;
+use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,58 +17,48 @@ use Symfony\Component\Validator\Constraints as Assert;
 abstract class AbstractEvent implements TimestampableInterface, EventInterface
 {
     use TimestampableTrait;
+    use IdentifiableTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[Groups(['event:read', 'user_event:write'])]
     protected Ulid $id;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected ?string $internalCode = null;
-
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
     protected ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
     protected ?string $description = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    protected ?string $location = null;
-
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
     protected ?string $price = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
+    #[Groups(['event:read', 'custom_event:write'])]
     protected ?string $url = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     #[Assert\Url]
+    #[Groups(['event:read'])]
     protected ?string $imageUrl = null;
 
     #[ORM\Column(type: 'datetimetz', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
     protected ?\DateTimeInterface $holdingDate = null;
+
+    #[ORM\ManyToOne(targetEntity: Location::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id')]
+    #[Groups(['event:read', 'custom_event:write'])]
+    protected ?Location $location = null;
 
     public function __construct(Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
-    }
-
-    public function getId(): Ulid
-    {
-        return $this->id;
-    }
-
-    public function getInternalCode(): ?string
-    {
-        return $this->internalCode;
-    }
-
-    public function setInternalCode(?string $internalCode = null): static
-    {
-        $this->internalCode = $internalCode;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -90,18 +81,6 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     public function setDescription(?string $description = null): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getLocation(): ?string
-    {
-        return $this->location;
-    }
-
-    public function setLocation(?string $location = null): static
-    {
-        $this->location = $location;
 
         return $this;
     }
@@ -150,6 +129,18 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     public function setHoldingDate(?\DateTimeInterface $holdingDate = null): static
     {
         $this->holdingDate = $holdingDate;
+
+        return $this;
+    }
+
+    public function getLocation(): ?Location
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?Location $location = null): static
+    {
+        $this->location = $location;
 
         return $this;
     }
