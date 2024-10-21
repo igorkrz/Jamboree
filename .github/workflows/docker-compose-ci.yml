@@ -15,7 +15,7 @@ jobs:
             - name: Create env file
               uses: SpicyPizza/create-envfile@v2.0
               with:
-                  envkey_APP_ENV: stage
+                  envkey_APP_ENV: prod
                   envkey_APP_SECRET: ${{ secrets.APP_SECRET }}
                   envkey_DATABASE_USER: ${{ secrets.DATABASE_USER }}
                   envkey_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
