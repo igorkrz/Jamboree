@@ -29,18 +29,10 @@ jobs:
             - name: Run docker-compose
               uses: hoverkraft-tech/compose-action@v2.0.1
 
-            - name: Build Docker images
-              run: |
-                  docker-compose build
-
             - name: Install dependencies using Composer
               run: |
-                  docker-compose run --rm php composer install
-
-            - name: Start services with Docker Compose
-              run: |
-                  docker-compose up -d
+                  docker compose run --rm php composer install
 
             - name: Run code quality
               run: |
-                  docker-compose run --rm php composer analyse-code
+                  docker compose run --rm php composer analyse-code
