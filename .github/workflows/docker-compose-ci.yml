@@ -10,10 +10,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
-            - name: Set up Docker
-              uses: docker/setup-buildx-action@v2
+            - name: Run docker-compose
+              uses: hoverkraft-tech/compose-action@v2.0.1
 
             - name: Build Docker images
               run: |
@@ -27,6 +27,6 @@ jobs:
               run: |
                   docker-compose up -d
 
-            - name: Run tests
+            - name: Run code quality
               run: |
                   docker-compose run --rm php composer analyse-code
