@@ -11,7 +11,8 @@ async function loginUser(credentials) {
         password: credentials.password,
     })
         .then(response => {
-            sessionStorage.setItem('access_token', response.data.access_token)
+            sessionStorage.removeItem('access_token');
+            sessionStorage.setItem('access_token', response.data.access_token);
         })
         .catch(error => console.error(error));
 }
@@ -28,6 +29,7 @@ export default function LoginForm({setToken}) {
         await loginUser({username, password})
 
         navigate("/");
+        navigate(0);
     }
 
     return (

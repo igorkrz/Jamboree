@@ -13,13 +13,6 @@ export default function RegistrationForm() {
     async function registerUser(credentials) {
         console.log(credentials);
         return useAxios.post('/api/security/register', credentials
-            // {
-            // data: JSON.stringify({
-            //     firstName: credentials.firstName,
-            //     lastName: credentials.lastName,
-            //     email: credentials.email,
-            //     plainPassword: credentials.plainPassword,
-            // })}
         )
             .then(response => response.data.access_token)
             .catch(error => console.error(error));
@@ -40,9 +33,8 @@ export default function RegistrationForm() {
             plainPassword
         });
 
-        console.log('TOKEN', token);
-
-        // navigate("/");
+        navigate("/login");
+        navigate(0);
     }
 
     return (

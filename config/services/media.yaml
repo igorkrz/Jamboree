@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    App\Manager\MediaManager:
+        arguments:
+            $imagineFilterService: '@liip_imagine.service.filter'
+            $projectDir: '%kernel.project_dir%'

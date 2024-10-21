@@ -24,3 +24,8 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
+
+    App\Manager\MediaManager:
+        arguments:
+            $imagineFilterService: '@liip_imagine.service.filter'
+            $projectDir: '%kernel.project_dir%'

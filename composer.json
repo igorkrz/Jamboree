@@ -16,6 +16,7 @@
         "gedmo/doctrine-extensions": "^3.14",
         "league/flysystem-bundle": "^3.3",
         "league/flysystem-google-cloud-storage": "^3.28",
+        "liip/imagine-bundle": "^2.13",
         "mark-gerarts/automapper-plus-bundle": "^1.5",
         "nelmio/cors-bundle": "^2.5",
         "pagerfanta/doctrine-collections-adapter": "^4.5",

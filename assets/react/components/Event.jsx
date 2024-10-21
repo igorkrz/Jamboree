@@ -38,7 +38,9 @@ export default function Event({ event, isFavorite, isAuthenticated = true, userE
     return (
         <div className="relative bg-white shadow-md rounded-lg overflow-hidden">
             <img className="w-full h-48 object-cover"
-                 src={event.picture ? event.picture.filePath : event.imageUrl}
+                 src={event.provider ?
+                     `/images/events/${event.picture ? event.picture.fileName : event.imageUrl}` :
+                     `/images/custom_events/${event.picture ? event.picture.fileName : event.imageUrl}`}
                  alt={event.name}
             />
 
