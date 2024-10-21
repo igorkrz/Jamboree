@@ -33,7 +33,7 @@ export default function SingleCustomEvent() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
             <div className="max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
                 <img className="w-full h-64 object-cover"
-                     src={event.picture ? event.picture.filePath : event.imageUrl}
+                     src={event.picture ? `/images/custom_events/${event.picture.fileName}` : event.imageUrl}
                      alt={event.name}
                 />
 
