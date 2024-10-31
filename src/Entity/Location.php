@@ -9,12 +9,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
-use App\Repository\AccessTokenRepository;
+use App\Repository\LocationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
 
-#[ORM\Entity(repositoryClass: AccessTokenRepository::class)]
+#[ORM\Entity(repositoryClass: LocationRepository::class)]
 #[ORM\Table(name: 'location')]
 #[ApiResource(
     operations: [
@@ -39,6 +39,18 @@ class Location implements ResourceInterface
     #[Groups(['event:read', 'custom_event:write'])]
     private ?string $city = null;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
+    private ?string $addressLine = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
+    private ?string $zipCode = null;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['event:read', 'custom_event:write'])]
+    private ?string $country = null;
+
     public function __construct(Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
@@ -61,9 +73,45 @@ class Location implements ResourceInterface
         return $this->city;
     }
 
-    public function setCity(string $city): static
+    public function setCity(?string $city = null): static
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function getAddressLine(): ?string
+    {
+        return $this->addressLine;
+    }
+
+    public function setAddressLine(?string $addressLine = null): static
+    {
+        $this->addressLine = $addressLine;
+
+        return $this;
+    }
+
+    public function getZipCode(): ?string
+    {
+        return $this->zipCode;
+    }
+
+    public function setZipCode(?string $zipCode = null): static
+    {
+        $this->zipCode = $zipCode;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?string $country = null): static
+    {
+        $this->country = $country;
 
         return $this;
     }

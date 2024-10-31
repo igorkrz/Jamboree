@@ -35,13 +35,10 @@ final readonly class LocationConfigurator implements AutoMapperConfiguratorInter
                 return $this->locationFactory->create();
             }
         );
-        $mapping->forMember('venue', function (LocationDto $dto): ?string {
-            if ($dto->venue === null) {
-                return null;
-            }
-
-            return trim($dto->venue);
-        });
+        $mapping->forMember('venue', fn (LocationDto $dto): ?string => $dto->venue);
         $mapping->forMember('city', fn (LocationDto $dto): ?string => $dto->city);
+        $mapping->forMember('addressLine', fn (LocationDto $dto): ?string => $dto->addressLine);
+        $mapping->forMember('zipCode', fn (LocationDto $dto): ?string => $dto->zipCode);
+        $mapping->forMember('country', fn (LocationDto $dto): ?string => $dto->country);
     }
 }

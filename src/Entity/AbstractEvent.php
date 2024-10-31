@@ -6,8 +6,10 @@ namespace App\Entity;
 
 use App\Entity\Contract\EventInterface;
 use App\Entity\Contract\IdentifiableTrait;
+use App\Entity\Contract\TaggableTrait;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
@@ -18,6 +20,7 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
 {
     use TimestampableTrait;
     use IdentifiableTrait;
+    use TaggableTrait;
 
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
@@ -59,6 +62,7 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     public function __construct(Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
+        $this->tags = new ArrayCollection();
     }
 
     public function getName(): ?string

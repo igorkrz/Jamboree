@@ -7,7 +7,7 @@ namespace App\Entity\Contract;
 use App\Entity\EventProvider;
 use App\Entity\Location;
 
-interface EventInterface extends ResourceInterface
+interface EventInterface extends ResourceInterface, TaggableInterface
 {
     public function getName(): ?string;
 

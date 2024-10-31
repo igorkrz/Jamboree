@@ -11,24 +11,9 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
-
-            - name: Create env file
-              uses: SpicyPizza/create-envfile@v2.0
+            - name: Composer install
+              uses: php-actions/composer@v6
+            - name: Php stan
+              uses: php-actions/phpstan@v3
               with:
-                  envkey_APP_ENV: prod
-                  envkey_APP_SECRET: ${{ secrets.APP_SECRET }}
-                  envkey_DATABASE_USER: ${{ secrets.DATABASE_USER }}
-                  envkey_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-                  envkey_DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-                  envkey_PHP_TIMEZONE: ${{ secrets.PHP_TIMEZONE }}
-                  envkey_TIMEZONE: ${{ secrets.TIMEZONE }}
-                  envkey_HOST_IP: ${{ secrets.HOST_IP }}
-                  envkey_PORT_PREFIX: ${{ secrets.PORT_PREFIX }}
-                  envkey_GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
-                  envkey_GOOGLE_BUCKET: ${{ secrets.GOOGLE_BUCKET }}
-                  envkey_GOOGLE_BUCKET_URL: ${{ secrets.GOOGLE_BUCKET_URL }}
-                  envkey_GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
-
-            - name: Run docker-compose
-              uses: hoverkraft-tech/compose-action@v2.0.1
+                  path: src/
