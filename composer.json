@@ -102,11 +102,12 @@
         "apply-migrations": [
             "@php bin/console doctrine:migrations:migrate --allow-no-migration --no-interaction"
         ],
-        "post-install-cmd": [
-            "@auto-scripts",
+        "yarn": [
             "yarn install",
-            "yarn run build",
-            "analyse-code"
+            "yarn run build"
+        ],
+        "post-install-cmd": [
+            "@auto-scripts"
         ],
         "post-update-cmd": [
             "@auto-scripts"
