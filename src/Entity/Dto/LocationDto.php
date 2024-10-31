@@ -11,4 +11,10 @@ class LocationDto
     public ?string $venue = null;
 
     public ?string $city = null;
+
+    public ?string $addressLine = null;
+
+    public ?string $zipCode = null;
+
+    public ?string $country = null;
 }

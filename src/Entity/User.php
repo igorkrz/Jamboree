@@ -141,7 +141,7 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
     public function hasEvent(EventInterface $event): bool
     {
         foreach ($this->getEvents() as $userEvent) {
-            if ($userEvent->getEvent()->getId()->toRfc4122() === $event->getId()->toRfc4122()) {
+            if ($userEvent->getEvent()->getObjectIdentifier() === $event->getObjectIdentifier()) {
                 return true;
             }
         }

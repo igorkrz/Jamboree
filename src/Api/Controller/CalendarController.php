@@ -32,7 +32,7 @@ final class CalendarController extends AbstractController
 
         try {
             $start = new DateTime($start);
-            $end = new DateTime();
+            $end = new DateTime($end === '' ? '+5years' : $end);
         } catch (Exception $e) {
             return $this->json($e->getMessage(), 422);
         }

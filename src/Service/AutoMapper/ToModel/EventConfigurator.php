@@ -9,16 +9,21 @@ use App\Entity\Event;
 use App\Entity\EventMediaObject;
 use App\Entity\EventProvider;
 use App\Entity\Location;
+use App\Entity\Tag;
 use App\Factory\EventFactory;
 use App\Factory\EventMediaObjectFactory;
 use App\Manager\MediaManager;
 use App\Repository\EventProviderRepository;
 use App\Repository\EventRepository;
+use App\Repository\TagRepository;
 use AutoMapperPlus\AutoMapperInterface;
 use AutoMapperPlus\AutoMapperPlusBundle\AutoMapperConfiguratorInterface;
 use AutoMapperPlus\Configuration\AutoMapperConfigInterface;
 use AutoMapperPlus\MappingOperation\Operation;
 use DateTime;
+use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 
 final class EventConfigurator implements AutoMapperConfiguratorInterface
@@ -30,6 +35,7 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
         private readonly EventMediaObjectFactory $eventMediaObjectFactory,
         private readonly EventProviderRepository $eventProviderRepository,
         private readonly EventRepository $eventRepository,
+        private readonly TagRepository $tagRepository,
         private readonly MediaManager $mediaManager,
     ) {
     }
@@ -113,6 +119,10 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
                 return null;
             }
 
+            if ($dto->holdingDate instanceof DateTimeInterface) {
+                return $dto->holdingDate;
+            }
+
             $date = str_replace(',', '', $dto->holdingDate);
 
             foreach (self::FORMATS as $format) {
@@ -125,6 +135,28 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
 
             return null;
         });
+
+        /**
+         * @return Collection<Tag>
+         */
+        $tagOperation = function (EventDto $dto): Collection {
+            $tags = new ArrayCollection();
+
+            foreach ($dto->tags as $tagName) {
+                $tag = $this->tagRepository->findOneBy(['name' => $tagName]);
+
+                if (!$tag instanceof Tag) {
+                    $tag = new Tag();
+                    $tag->setName($tagName);
+                }
+
+                $tags->add($tag);
+            }
+
+            return $tags;
+        };
+
+        $mapping->forMember('tags', $tagOperation);
     }
 
     private function getStorageFilePath(EventMediaObject $picture, ?File $file = null): ?string

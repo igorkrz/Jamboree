@@ -8,39 +8,40 @@ use App\Entity\Dto\EventDto;
 use App\Factory\EventFactory;
 use App\Factory\LocationFactory;
 use App\Service\Scraper\ItemScraperInterface;
+use DateTime;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DomCrawler\Crawler;
+use ReflectionException;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\RedirectionException;
 use Symfony\Component\HttpClient\Exception\ServerException;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final readonly class DirtyOldItemScraper implements ItemScraperInterface
+final readonly class HangtimeItemScraper implements ItemScraperInterface
 {
+    private const BASE_EVENT_URL = 'https://tickets.hangtimeagency.com/event-detail-hr/';
+    private const BASE_IMAGE_URL = 'https://ttcdn.b-cdn.net/images/Event/';
+
     public function __construct(
         private HttpClientInterface $httpClient,
         private EventFactory $eventFactory,
         private LocationFactory $locationFactory,
-        private LoggerInterface $logger,
     ) {
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException|DecodingExceptionInterface
      */
     public function scrape(string $url): EventDto
     {
         try {
-            $response = $this->httpClient->request('GET', $url);
-
-            $htmlContent = $response->getContent();
-            $crawler = new Crawler($htmlContent);
+            $response = $this->httpClient->request('GET', $url)->toArray()['Event'];
 
             $resolver = new OptionsResolver();
             $resolver->setDefaults([
@@ -51,8 +52,9 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
                 'holdingDate' => null,
                 'url' => null,
                 'imageUrl' => null,
-                'provider' => 'Dirty old shop',
+                'provider' => 'Hangtime agency',
                 'location' => null,
+                'tags' => [],
             ]);
 
             $locationResolver = new OptionsResolver();
@@ -63,19 +65,6 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
                 'zipCode' => null,
                 'country' => null,
             ]);
-
-            $image = $crawler->filter('.woocommerce-product-gallery__image > a')->link()->getUri();
-
-            $event = $crawler
-                ->filter('.summary')
-                ->each(function (Crawler $node) {
-                    return [
-                        'internalCode' => $node->filter('.product_meta > .sku_wrapper >.sku')->text(),
-                        'name' => $node->filter('.product_title')->text(),
-                        'description' => $node->filter('.woocommerce-product-details__short-description')->text(),
-                        'price' => (int) $node->filter('.price')->text(),
-                    ];
-                })[0];
         } catch (ClientExceptionInterface $e) {
             throw new ClientException($e->getResponse());
         } catch (RedirectionExceptionInterface $e) {
@@ -87,32 +76,23 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
         }
 
         $location = [
-            'city' => 'Zagreb'
+            'venue' => $response['Building']['ProfileName'],
+            'city' => $response['AddressContact']['City'],
+            'addressLine' => $response['AddressContact']['AddressLine'],
+            'zipCode' => $response['AddressContact']['Zip'],
+            'country' => $response['AddressContact']['Country'],
         ];
 
-        $description = $event['description'];
-
-        $pattern = '/\b(\d{1,2}\.\d{1,2}\.\d{4}|\d{1,2}\.\d{1,2}\.\d{2}|\d{1,2}\.\d{1,2}\.),?|\b(\d{4}-\d{2}-\d{2})\b,?|\b(\d{1,2}\/\d{1,2}\/\d{4})\b,?|\b(\d{1,2}-\d{1,2}-\d{4})\b,?/';
-        preg_match($pattern, $description, $matches);
-
-        if (count($matches) > 0) {
-            $event['holdingDate'] = $matches[0];
-
-            $datePosition = strpos($description, $matches[0]);
-            $afterDate = trim(substr($description, $datePosition + strlen($matches[0])), " \n\r\t\v\0,.");
-
-            $this->logger->info($afterDate);
-
-            $locationPattern = '/^[\p{L}\s]+(?:\s*[–-])?/u';
-            if (preg_match($locationPattern, $afterDate, $locationMatches)) {
-                $cleanedString = preg_replace('/\s*[–-]\s*$/u', '', $locationMatches[0]);
-                $location['venue'] = $cleanedString;
-                $this->logger->info($location['venue']);
-            }
-        }
-
-        $event['url'] = $url;
-        $event['imageUrl'] = $image;
+        $event = [
+            'internalCode' => $response['_id'],
+            'name' => $response['ProfileName'],
+            'description' => $response['About'],
+            'price' => $response['MinPrice'],
+            'holdingDate' => new DateTime($response['Begin']),
+            'url' => self::BASE_EVENT_URL . $response['_id'],
+            'imageUrl' => self::BASE_IMAGE_URL . $response['_id'] . '/' . $response['ShareImage'] . '.jpg',
+            'tags' => $response['Keywords'],
+        ];
 
         $locationDto = $this->locationFactory->createDtoFromArray($locationResolver->resolve($location));
         $event['location'] = $locationDto;

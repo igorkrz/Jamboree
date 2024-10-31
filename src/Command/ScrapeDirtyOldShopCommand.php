@@ -18,7 +18,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class ScrapeEventsCommand extends Command
+final class ScrapeDirtyOldShopCommand extends Command
 {
     private int $created = 0;
 
@@ -38,7 +38,7 @@ final class ScrapeEventsCommand extends Command
 
     protected function configure(): void
     {
-        $this->setName('app:scrape-events');
+        $this->setName('app:scrape:dirty-old-shop');
     }
 
     /**

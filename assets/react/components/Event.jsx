@@ -58,8 +58,8 @@ export default function Event({ event, isFavorite, isAuthenticated = true, userE
 
             <div className="p-4">
                 <h3 className="text-xl font-bold mb-2">{event.name}</h3>
-                <p className="text-gray-700 text-sm mb-2">{event.description}</p>
-                {event.provider && (
+                <p className="text-gray-700 text-sm mb-2 line-clamp-3">{event.description}</p>
+                {event.provider  && (
                     <p className="text-gray-600 mb-2">
                         <strong>Provider: </strong>{event.provider.name}
                     </p>

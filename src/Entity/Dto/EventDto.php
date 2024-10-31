@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity\Dto;
 
-use Symfony\Component\Uid\Ulid;
+use DateTimeInterface;
 
 class EventDto
 {
@@ -22,7 +22,12 @@ class EventDto
 
     public ?string $imageUrl = null;
 
-    public ?string $holdingDate = null;
+    public string|DateTimeInterface|null $holdingDate = null;
 
     public ?string $provider = null;
+
+    /**
+     * @var string[]
+     */
+    public array $tags = [];
 }
