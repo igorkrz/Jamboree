@@ -51,7 +51,7 @@ class Location implements ResourceInterface
     #[Groups(['event:read', 'custom_event:write'])]
     private ?string $country = null;
 
-    public function __construct(Ulid $id = null)
+    public function __construct(?Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
     }

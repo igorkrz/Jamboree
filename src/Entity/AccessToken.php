@@ -41,7 +41,7 @@ class AccessToken implements ResourceInterface, TimestampableInterface
     #[ORM\Column(type: 'datetimetz')]
     private DateTime $validUntil;
 
-    public function __construct(Ulid $id = null)
+    public function __construct(?Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
 

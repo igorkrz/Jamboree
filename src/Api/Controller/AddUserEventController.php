@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Api\Controller;
 
-use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\IriConverterInterface;
 use App\Entity\Contract\EventInterface;
 use App\Entity\CustomEvent;
 use App\Entity\Event;

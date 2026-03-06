@@ -39,7 +39,7 @@ class Tag implements TimestampableInterface, ResourceInterface
     #[ORM\ManyToMany(targetEntity: AbstractEvent::class, mappedBy: 'tags')]
     protected Collection $events;
 
-    public function __construct(Ulid $id = null)
+    public function __construct(?Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
         $this->events = new ArrayCollection();

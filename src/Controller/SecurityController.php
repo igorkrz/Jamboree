@@ -68,7 +68,7 @@ final class SecurityController extends AbstractController
             $this->emailVerifier->sendEmailConfirmation(
                 'verify_email',
                 $user,
-                (new TemplatedEmail())
+                new TemplatedEmail()
                     ->from(new Address('mailer@jamboree.com', 'JamboreeBot'))
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')

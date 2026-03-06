@@ -35,7 +35,7 @@ class EventProvider implements ResourceInterface
     #[Groups(['event:read'])]
     private string $name;
 
-    public function __construct(Ulid $id = null)
+    public function __construct(?Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
     }

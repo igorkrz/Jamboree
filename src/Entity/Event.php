@@ -84,7 +84,7 @@ class Event extends AbstractEvent
         return $this->provider;
     }
 
-    public function setProvider(EventProvider $provider = null): static
+    public function setProvider(?EventProvider $provider = null): static
     {
         $this->provider = $provider;
 

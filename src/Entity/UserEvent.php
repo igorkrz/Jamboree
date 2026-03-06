@@ -64,7 +64,7 @@ class UserEvent implements ResourceInterface, TimestampableInterface
     #[Groups(['event:read'])]
     protected ?bool $attending = null;
 
-    public function __construct(Ulid $id = null)
+    public function __construct(?Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
     }

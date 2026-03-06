@@ -41,12 +41,12 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     protected ?string $price = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\Url]
+    #[Assert\Url(requireTld: true)]
     #[Groups(['event:read', 'custom_event:write'])]
     protected ?string $url = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Assert\Url]
+    #[Assert\Url(requireTld: true)]
     #[Groups(['event:read'])]
     protected ?string $imageUrl = null;
 
@@ -59,7 +59,7 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
     #[Groups(['event:read', 'custom_event:write'])]
     protected ?Location $location = null;
 
-    public function __construct(Ulid $id = null)
+    public function __construct(?Ulid $id = null)
     {
         $this->id = $id ?? new Ulid();
         $this->tags = new ArrayCollection();
