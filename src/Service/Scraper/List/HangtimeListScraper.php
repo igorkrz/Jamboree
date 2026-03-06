@@ -42,7 +42,7 @@ final class HangtimeListScraper implements ListScraperInterface
                 ->filter('.tt-evt-li')
                 ->each(function (Crawler $node) {
                     preg_match(
-                        '#(?<=event-detail-hr/)[^/]+(?=/\?lang=hr)#',
+                        '#/([a-f0-9]{24})/?$#',
                         $node->filter('.tt-evt-li__name')->link()->getUri(),
                         $match
                     );
