@@ -32,18 +32,18 @@ export default function Events() {
                 console.log(response.data);
                 const data = response.data;
 
-                if (data['hydra:view']) {
-                    const firstPage = data['hydra:view']['hydra:first'] ?? 1;
-                    const lastPage = data['hydra:view']['hydra:last'] ?? 1;
+                if (data['view']) {
+                    const firstPage = data['view']['first'] ?? 1;
+                    const lastPage = data['view']['last'] ?? 1;
 
                     firstPage === 1 ? setFirstPage(1) : setFirstPage(firstPage.match(/\d+$/)[0]);
                     lastPage === 1 ? setLastPage(1) : setLastPage(lastPage.match(/\d+$/)[0]);
                 }
 
-                const totalItems = data['hydra:totalItems'];
+                const totalItems = data['totalItems'];
 
                 setTotalItems(totalItems);
-                setEvents(data['hydra:member']);
+                setEvents(data['member']);
 
                 setLoading(false);
             })
@@ -73,7 +73,7 @@ export default function Events() {
                 .then(response => {
                     console.log(response.data);
                     const data = response.data;
-                    setUserEvents(data['hydra:member']);
+                    setUserEvents(data['member']);
                 })
                 .catch(error => {
                     console.error(error);
@@ -89,25 +89,23 @@ export default function Events() {
         <div className="container mx-auto px-4 py-8">
             <h2 className="text-3xl font-bold mb-8 text-center">Upcoming Events</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {
-                    events.map((event) => {
-                        let favoriteEvents = [];
+                { events.map((event) => {
+                    let favoriteEvents = [];
 
-                        if (isAuthenticated) {
-                            favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
-                        }
+                    if (isAuthenticated) {
+                        favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
+                    }
 
-                        return <Event
-                            key={event.id}
-                            name={event.name}
-                            event={event}
-                            isFavorite={favoriteEvents.length > 0}
-                            isAuthenticated={isAuthenticated}
-                        />
-                    })
-                }
+                    return <Event
+                        key={event.id}
+                        name={event.name}
+                        event={event}
+                        isFavorite={favoriteEvents.length > 0}
+                        isAuthenticated={isAuthenticated}
+                    />
+                })}
             </div>
-            { events.length > 0 && totalItems > itemsPerPage && (
+            { events.totalItems > 0 && totalItems > itemsPerPage && (
                 <Pagination
                     currentPage={currentPage}
                     firstPage={firstPage}

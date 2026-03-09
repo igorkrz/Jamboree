@@ -27,18 +27,18 @@ export default function UserEvents() {
                 console.log(response.data);
                 const data = response.data;
 
-                if (data['hydra:view']) {
-                    const firstPage = data['hydra:view']['hydra:first'] ?? 1;
-                    const lastPage = data['hydra:view']['hydra:last'] ?? 1;
+                if (data['view']) {
+                    const firstPage = data['view']['first'] ?? 1;
+                    const lastPage = data['view']['last'] ?? 1;
 
                     firstPage === 1 ? setFirstPage(1) : setFirstPage(firstPage.match(/\d+$/)[0]);
                     lastPage === 1 ? setLastPage(1) : setLastPage(lastPage.match(/\d+$/)[0]);
                 }
 
-                const totalItems = data['hydra:totalItems'];
+                const totalItems = data['totalItems'];
 
                 setTotalItems(totalItems);
-                setEvents(data['hydra:member']);
+                setEvents(data['member']);
 
                 setLoading(false);
             })

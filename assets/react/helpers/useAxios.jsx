@@ -1,9 +1,7 @@
 import axios from "axios";
 
 const useAxios = axios.create({
-    baseURL: process.env.NODE_ENV === 'production'
-        ? 'http://49.13.134.200:8380'
-        : 'http://localhost:8380',
+    baseURL: import.meta.env.VITE_ENV === 'dev' ? 'http://127.0.0.1' : 'http://n8n.jamboree.cloud',
     headers: {
         'Accept': 'application/json+ld'
     }

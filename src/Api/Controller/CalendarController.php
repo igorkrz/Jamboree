@@ -8,15 +8,20 @@ use App\Entity as E;
 use App\Entity\User;
 use App\Repository\EventRepository;
 use CalendarBundle\Entity\Event;
-use CalendarBundle\Event\CalendarEvent;
+use CalendarBundle\Event\SetDataEvent;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+
+use function array_map;
+use function is_string;
+use function is_array;
+use function json_decode;
+use function json_encode;
 
 final class CalendarController extends AbstractController
 {
@@ -38,10 +43,10 @@ final class CalendarController extends AbstractController
         }
 
         $filters = $request->get('filters', '{}');
-        $filters = \is_array($filters) ? $filters : json_decode($filters, true);
+        $filters = is_array($filters) ? $filters : json_decode($filters, true);
 
         $events = $this->getEvents($user);
-        $calendarEvent = new CalendarEvent($start, $end, $filters);
+        $calendarEvent = new SetDataEvent($start, $end, $filters);
 
         foreach ($events as $event) {
             $this->createCalendarEvent($calendarEvent, $event);
@@ -79,7 +84,7 @@ final class CalendarController extends AbstractController
             ->getResult();
     }
 
-    private function createCalendarEvent(CalendarEvent $calendarEvent, E\Event|E\UserEvent $event): void
+    private function createCalendarEvent(SetDataEvent $calendarEvent, E\Event|E\UserEvent $event): void
     {
         if ($event instanceof E\UserEvent) {
             $calendarEvent->addEvent(new Event(
