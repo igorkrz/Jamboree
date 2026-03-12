@@ -33,11 +33,17 @@ export default function Events() {
                 const data = response.data;
 
                 if (data['view']) {
-                    const firstPage = data['view']['first'] ?? 1;
-                    const lastPage = data['view']['last'] ?? 1;
+                    const firstPageUrl = data['view']['first'] ?? "";
+                    const lastPageUrl = data['view']['last'] ?? "";
 
-                    firstPage === 1 ? setFirstPage(1) : setFirstPage(firstPage.match(/\d+$/)[0]);
-                    lastPage === 1 ? setLastPage(1) : setLastPage(lastPage.match(/\d+$/)[0]);
+                    const firstMatch = firstPageUrl.match(/[?&]page=(\d+)/);
+                    const lastMatch = lastPageUrl.match(/[?&]page=(\d+)/);
+
+                    setFirstPage(firstMatch ? firstMatch[1] : 1);
+                    setLastPage(lastMatch ? lastMatch[1] : 1);
+                } else {
+                    setFirstPage(1);
+                    setLastPage(1);
                 }
 
                 const totalItems = data['totalItems'];
@@ -105,11 +111,11 @@ export default function Events() {
                     />
                 })}
             </div>
-            { events.totalItems > 0 && totalItems > itemsPerPage && (
+            { totalItems > itemsPerPage && (
                 <Pagination
-                    currentPage={currentPage}
-                    firstPage={firstPage}
-                    lastPage={lastPage}
+                    currentPage={Number(currentPage)}
+                    firstPage={Number(firstPage)}
+                    lastPage={Number(lastPage)}
                     totalItems={totalItems}
                     itemsPerPage={itemsPerPage}
                     onPageChange={handlePageChange}
