@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Scraper\List;
 
+use App\Enum\ScraperProvider;
 use App\Service\Scraper\ListScraperInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\Exception\ClientException;
@@ -16,14 +17,16 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+use function preg_match;
+
 final class HangtimeListScraper implements ListScraperInterface
 {
-    private const URL = 'https://tickets.hangtimeagency.com/';
+    private const string URL = 'https://tickets.hangtimeagency.com/';
 
-    private const BASE_API_URL = 'https://api.tootoot.co/api/event/';
+    private const string BASE_API_URL = 'https://api.tootoot.co/api/event/';
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient
+        private readonly HttpClientInterface $httpClient,
     ) {
     }
 
@@ -62,5 +65,10 @@ final class HangtimeListScraper implements ListScraperInterface
         }
 
         return $events;
+    }
+
+    public function getProvider(): ScraperProvider
+    {
+        return ScraperProvider::HANGTIME_AGENCY;
     }
 }

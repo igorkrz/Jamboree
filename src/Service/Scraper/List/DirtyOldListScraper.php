@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Scraper\List;
 
+use App\Enum\ScraperProvider;
 use App\Service\Scraper\ListScraperInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\Exception\ClientException;
@@ -18,10 +19,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class DirtyOldListScraper implements ListScraperInterface
 {
-    private const URL = 'https://www.dirtyoldempire.com/en/product-category/karte-en/' ;
+    private const string URL = 'https://www.dirtyoldempire.com/en/product-category/karte-en/' ;
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient
+        private readonly HttpClientInterface $httpClient,
     ) {
     }
 
@@ -56,5 +57,10 @@ final class DirtyOldListScraper implements ListScraperInterface
         }
 
         return $events;
+    }
+
+    public function getProvider(): ScraperProvider
+    {
+        return ScraperProvider::DIRTY_OLD_SHOP;
     }
 }

@@ -5,14 +5,18 @@ framework:
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%/async'
                 options:
-                    use_notify: true
-                    check_delayed_interval: 60000
+                    consumer: '%env(default::HOSTNAME)%'
+                    stream_max_entries: 10000
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
-            failed: 'doctrine://default?queue_name=failed'
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%/failed'
+                options:
+                    consumer: '%env(default::HOSTNAME)%'
+                    stream_max_entries: 10000
             # sync: 'sync://'
 
         default_bus: messenger.bus.default
@@ -25,5 +29,4 @@ framework:
             Symfony\Component\Notifier\Message\ChatMessage: async
             Symfony\Component\Notifier\Message\SmsMessage: async
 
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            App\Message\ScrapeItemMessage: async

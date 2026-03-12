@@ -25,6 +25,10 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
 
+    _instanceof:
+        App\Service\Scraper\ListScraperInterface:
+            tags: ['app.list_scraper']
+
     App\Manager\MediaManager:
         arguments:
             $imagineFilterService: '@liip_imagine.service.filter'
