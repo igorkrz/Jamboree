@@ -13,7 +13,6 @@ use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -21,7 +20,6 @@ use function array_map;
 use function is_string;
 use function is_array;
 use function json_decode;
-use function json_encode;
 
 final class CalendarController extends AbstractController
 {
@@ -30,7 +28,7 @@ final class CalendarController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[CurrentUser] ?User $user, Request $request): JsonResponse
+    public function __invoke(#[CurrentUser] ?User $user, Request $request): array
     {
         $start = is_string($request->query->get('start')) ? $request->query->get('start') : '';
         $end = is_string($request->query->get('end')) ? $request->query->get('end') : '';
@@ -39,7 +37,7 @@ final class CalendarController extends AbstractController
             $start = new DateTime($start);
             $end = new DateTime($end === '' ? '+5years' : $end);
         } catch (Exception $e) {
-            return $this->json($e->getMessage(), 422);
+            throw new Exception($e->getMessage(), 422);
         }
 
         $filters = $request->get('filters', '{}');
@@ -52,21 +50,7 @@ final class CalendarController extends AbstractController
             $this->createCalendarEvent($calendarEvent, $event);
         }
 
-        $content = $this->serialize($calendarEvent->getEvents());
-
-        if ($content === false) {
-            return $this->json('failed', 422);
-        }
-
-        return $this->json($content);
-    }
-
-    /**
-     * @param Event[] $events
-     */
-    private function serialize(array $events): string|false
-    {
-        return json_encode(array_map(fn (Event $event) => $event->toArray(), $events));
+        return array_map(fn (Event $event) => $event->toArray(), $calendarEvent->getEvents());
     }
 
     /**

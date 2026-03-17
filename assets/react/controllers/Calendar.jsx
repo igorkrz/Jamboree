@@ -14,7 +14,10 @@ export default function Calendar() {
                start,
            }
        })
-           .then(response => setEvents(JSON.parse(response.data)))
+           .then(response => {
+               console.log(response.data);
+               setEvents(response.data['member'] || response.data);
+           })
            .catch(error => console.error(error));
     }, []);
 
