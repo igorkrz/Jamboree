@@ -1,35 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAxios from "../helpers/useAxios.jsx";
-import useToken from "../helpers/useAxios.jsx"
-import { useDispatch, useSelector } from "react-redux";
-import { checkLogin } from "../../redux/reducers/authSlice";
+import useToken from "../helpers/useToken.jsx"
+import { ENDPOINTS } from "../../api/constants/Endpoints";
 
-async function loginUser(credentials) {
-    return useAxios.post('/api/security/login_check', {
-        username: credentials.username,
-        password: credentials.password,
-    })
-        .then(response => {
-            sessionStorage.removeItem('access_token');
-            sessionStorage.setItem('access_token', response.data.access_token);
-        })
-        .catch(error => console.error(error));
-}
-
-export default function LoginForm({setToken}) {
+export default function LoginForm() {
+    const { setToken } = useToken();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('handleSubmit', e);
-        await loginUser({username, password})
-
-        navigate("/");
-        navigate(0);
+        try {
+            const response = await useAxios.post(ENDPOINTS.LOGIN, {
+                username: username,
+                password: password,
+            });
+            setToken(response.data.token);
+            navigate("/");
+            navigate(0);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (

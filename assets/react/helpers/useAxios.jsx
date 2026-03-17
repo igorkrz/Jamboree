@@ -11,7 +11,7 @@ useAxios.interceptors.request.use((config) => {
     const token = sessionStorage.getItem('access_token');
 
     if (token) {
-        config.headers['Authorization'] = 'Bearer ' + sessionStorage.getItem('access_token').replace(/^"(.*)"$/, '$1');
+        config.headers['Authorization'] = `Bearer ${token}`;
     }
 
     return config;

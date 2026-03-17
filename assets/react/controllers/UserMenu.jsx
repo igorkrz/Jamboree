@@ -9,7 +9,6 @@ export default function UserMenu() {
 
     function handleLogout() {
         dispatch(logout())
-        sessionStorage.removeItem('access_token');
 
         navigate("/");
     }
@@ -42,13 +41,12 @@ export default function UserMenu() {
                     </a>
                 </MenuItem>
                 <MenuItem>
-                    <a
-                        href="/api/security/logout"
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                    <button
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                         onClick={handleLogout}
                     >
                         Sign out
-                    </a>
+                    </button>
                 </MenuItem>
             </MenuItems>
         </Menu>

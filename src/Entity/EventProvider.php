@@ -9,12 +9,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
-use App\Repository\AccessTokenRepository;
+use App\Repository\EventProviderRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
 
-#[ORM\Entity(repositoryClass: AccessTokenRepository::class)]
+#[ORM\Entity(repositoryClass: EventProviderRepository::class)]
 #[ORM\Table(name: 'event_provider')]
 #[ApiResource(
     operations: [

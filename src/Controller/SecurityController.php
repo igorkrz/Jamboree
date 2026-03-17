@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Factory\AccessTokenFactory;
 use App\Factory\UserFactory;
 use App\Form\RegistrationType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -34,7 +32,6 @@ final class SecurityController extends AbstractController
         private readonly EmailVerifier $emailVerifier,
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly TranslatorInterface $translator,
-        private readonly AccessTokenFactory $accessTokenFactory,
         private readonly UserFactory $userFactory,
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -109,33 +106,10 @@ final class SecurityController extends AbstractController
         return $this->redirectToRoute('register');
     }
 
-    #[Route(path: '/api/security/login_check', name: 'api_security_login_check', methods: [Request::METHOD_POST])]
-    public function login(#[CurrentUser] ?User $user, Request $request): JsonResponse
+    #[Route(path: '/api/login', name: 'api_login_check', methods: [Request::METHOD_POST])]
+    public function login(): void
     {
-        if (!$user instanceof User) {
-            throw new LogicException(sprintf(
-                "Expected instance of %s, but got %s",
-                User::class,
-                $user
-            ));
-        }
-
-        $accessToken = $this->accessTokenFactory->create()
-            ->setUserIdentifier($user->getUserIdentifier())
-            ->setHost($request->server->get('HTTP_USER_AGENT'))
-            ->setIpAddress($request->getClientIp())
-            ->setValidUntil(new DateTime('+1 hour'));
-
-        $this->entityManager->persist($accessToken);
-        $this->entityManager->flush();
-
-        $refreshToken = $this->accessTokenFactory->create();
-
-        return $this->json([
-            'user' => $user->getUserIdentifier(),
-            'access_token' => $accessToken->getToken(),
-            'refresh_token' => $refreshToken->getToken(),
-        ]);
+        throw new LogicException('This method can be blank - it will be intercepted by the login key on your firewall.');
     }
 
     #[Route(path: '/api/security/login_state', name: 'api_security_login_state', methods: [Request::METHOD_GET, Request::METHOD_POST])]
@@ -144,9 +118,16 @@ final class SecurityController extends AbstractController
         return $this->json($this->isGranted('ROLE_USER'));
     }
 
-    #[Route(path: '/api/security/logout', name: 'api_security_logout', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function logout(Request $request): void
+    #[Route(path: '/api/logout', name: 'api_security_logout', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function logout(Request $request): JsonResponse
     {
         throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route(path: '/api/security/refresh', name: 'api_security_refresh', methods: [Request::METHOD_POST])]
+    public function refresh(): void
+    {
+        // This will be handled by gesdinet/jwt-refresh-token-bundle once installed
+        throw new LogicException('Not implemented yet.');
     }
 }

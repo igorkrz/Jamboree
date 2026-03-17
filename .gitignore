@@ -2,6 +2,7 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
 ### project ###
 .env
 .env.local
@@ -14,6 +15,8 @@
 tools/php-cs-fixer/vendor/
 .php-cs-fixer.cache
 .config/*
+/config/reference.php
+### project ###
 
 ###> assets ###
 /node_modules/
@@ -30,3 +33,7 @@ yarn-error.log
 ###> liip/imagine-bundle ###
 /public/media/cache/
 ###< liip/imagine-bundle ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
