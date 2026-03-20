@@ -10,6 +10,7 @@ use App\Enum\ScraperProvider;
 use App\Message\ScrapeItemMessage;
 use App\Repository\EventRepository;
 use App\Service\Scraper\Item\DirtyOldItemScraper;
+use App\Service\Scraper\Item\EventimItemScraper;
 use App\Service\Scraper\Item\HangtimeItemScraper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -27,6 +28,7 @@ final readonly class ScrapeItemMessageHandler
         private EventFactory $eventFactory,
         private DirtyOldItemScraper $dirtyOldItemScraper,
         private HangtimeItemScraper $hangtimeItemScraper,
+        private EventimItemScraper $eventimItemScraper,
         private LoggerInterface $logger,
     ) {
     }
@@ -43,6 +45,7 @@ final readonly class ScrapeItemMessageHandler
             $scraper = match ($message->provider) {
                 ScraperProvider::DIRTY_OLD_SHOP => $this->dirtyOldItemScraper,
                 ScraperProvider::HANGTIME_AGENCY => $this->hangtimeItemScraper,
+                ScraperProvider::EVENTIM => $this->eventimItemScraper,
             };
 
             $dto = $scraper->scrape($message->url);

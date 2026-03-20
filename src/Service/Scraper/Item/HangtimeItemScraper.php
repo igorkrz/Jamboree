@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Service\Scraper\Item;
 
 use App\Entity\Dto\EventDto;
+use App\Enum\ScraperProvider;
 use App\Factory\EventFactory;
 use App\Factory\LocationFactory;
 use App\Service\Scraper\ItemScraperInterface;
 use DateTime;
-use Psr\Log\LoggerInterface;
 use ReflectionException;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\RedirectionException;
@@ -25,8 +25,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final readonly class HangtimeItemScraper implements ItemScraperInterface
 {
-    private const BASE_EVENT_URL = 'https://tickets.hangtimeagency.com/event-detail-hr/';
-    private const BASE_IMAGE_URL = 'https://ttcdn.b-cdn.net/images/Event/';
+    private const string BASE_EVENT_URL = 'https://tickets.hangtimeagency.com/event-detail-hr/';
+    private const string BASE_IMAGE_URL = 'https://ttcdn.b-cdn.net/images/Event/';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -52,7 +52,7 @@ final readonly class HangtimeItemScraper implements ItemScraperInterface
                 'holdingDate' => null,
                 'url' => null,
                 'imageUrl' => null,
-                'provider' => 'Hangtime agency',
+                'provider' => ScraperProvider::HANGTIME_AGENCY->value,
                 'location' => null,
                 'tags' => [],
             ]);

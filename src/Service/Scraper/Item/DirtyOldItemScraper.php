@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Scraper\Item;
 
 use App\Entity\Dto\EventDto;
+use App\Enum\ScraperProvider;
 use App\Factory\EventFactory;
 use App\Factory\LocationFactory;
 use App\Service\Scraper\ItemScraperInterface;
@@ -20,6 +21,14 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+use function count;
+use function preg_match;
+use function preg_replace;
+use function strpos;
+use function strlen;
+use function substr;
+use function trim;
 
 final readonly class DirtyOldItemScraper implements ItemScraperInterface
 {
@@ -51,7 +60,7 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
                 'holdingDate' => null,
                 'url' => null,
                 'imageUrl' => null,
-                'provider' => 'Dirty old shop',
+                'provider' => ScraperProvider::DIRTY_OLD_SHOP->value,
                 'location' => null,
             ]);
 
