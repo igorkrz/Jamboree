@@ -19,12 +19,12 @@ services:
             - MESSENGER_TRANSPORT_DSN=${MESSENGER_TRANSPORT_DSN}
 
     database:
-        image: postgres:${POSTGRES_VERSION:-16}-alpine
+        image: postgres:${DATABASE_VERSION:-16}-alpine
         restart: always
         environment:
-            POSTGRES_DB: ${POSTGRES_DB:-app}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-            POSTGRES_USER: ${POSTGRES_USER:-app}
+            DATABASE_NAME: ${DATABASE_NAME:-app}
+            DATABASE_PASSWORD: ${DATABASE_PASSWORD:-!ChangeMe!}
+            DATABASE_USER: ${DATABASE_USER:-app}
         ports:
             - "5432:5432"
         volumes:
@@ -32,7 +32,7 @@ services:
         networks:
             - network
         healthcheck:
-            test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app}" ]
+            test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USER:-app} -d ${DATABASE_NAME:-app}" ]
             interval: 5s
             timeout: 5s
             retries: 5
