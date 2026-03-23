@@ -22,13 +22,13 @@ services:
         image: postgres:${DATABASE_VERSION:-16}-alpine
         restart: always
         environment:
-            DATABASE_NAME: ${DATABASE_NAME:-app}
-            DATABASE_PASSWORD: ${DATABASE_PASSWORD:-!ChangeMe!}
-            DATABASE_USER: ${DATABASE_USER:-app}
+            POSTGRES_DB: ${DATABASE_NAME:-app}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-!ChangeMe!}
+            POSTGRES_USER: ${DATABASE_USER:-app}
         ports:
             - "5432:5432"
         volumes:
-            - database_data:/var/lib/postgresql/data:rw
+            - ./docker/db/data:/var/lib/postgresql/data:rw
         networks:
             - network
         healthcheck:
