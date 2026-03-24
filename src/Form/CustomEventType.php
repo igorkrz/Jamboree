@@ -33,7 +33,7 @@ class CustomEventType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => CustomEvent::class,
-            'csrf_protection' => false, // Temporary
+            'csrf_protection' => false,
         ]);
     }
 }

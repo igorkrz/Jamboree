@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model;
 use App\Api\Controller\CreateCustomEventController;
 use App\Repository\CustomEventRepository;
+use ArrayObject;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -28,7 +29,7 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
             controller: CreateCustomEventController::class,
             openapi: new Model\Operation(
                 requestBody: new Model\RequestBody(
-                    content: new \ArrayObject([
+                    content: new ArrayObject([
                         'multipart/form-data' => [
                             'schema' => [
                                 'type' => 'object',

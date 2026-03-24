@@ -77,7 +77,7 @@ export default function Events() {
         if (isAuthenticated) {
             useAxios.get(`/api/user_events`)
                 .then(response => {
-                    console.log(response.data);
+                    console.log("USER EVENTS RESPONSE", response.data);
                     const data = response.data;
                     setUserEvents(data['member']);
                 })
@@ -96,17 +96,15 @@ export default function Events() {
             <h2 className="text-3xl font-bold mb-8 text-center">Upcoming Events</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 { events.map((event) => {
-                    let favoriteEvents = [];
-
-                    if (isAuthenticated) {
-                        favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
-                    }
+                    const favoriteEvents = isAuthenticated ? userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id)) : [];
+                    const userEventId = favoriteEvents.length > 0 ? favoriteEvents[0].id : null;
 
                     return <Event
                         key={event.id}
                         name={event.name}
                         event={event}
                         isFavorite={favoriteEvents.length > 0}
+                        userEventId={userEventId}
                         isAuthenticated={isAuthenticated}
                     />
                 })}

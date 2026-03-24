@@ -11,6 +11,7 @@ use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
 use App\Repository\UserRepository;
+use Deprecated;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -201,6 +202,7 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
         return $this;
     }
 
+    #[Deprecated]
     public function eraseCredentials(): void
     {
         // TODO: Implement eraseCredentials() method.

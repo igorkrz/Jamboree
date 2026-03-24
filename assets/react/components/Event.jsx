@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HeartIcon } from "@heroicons/react/24/outline/index.js";
 import { HeartIcon as SelectedHeartIcon } from "@heroicons/react/24/solid/index.js";
 import useAxios from "../helpers/useAxios.jsx";
@@ -6,13 +6,27 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Event({ event, isFavorite, isAuthenticated = true, userEventId = null }) {
     const [isFavorited, setFavorite] = useState(isFavorite);
+    const [currentUserEventId, setCurrentUserEventId] = useState(userEventId);
+    const [isProcessing, setIsProcessing] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setFavorite(isFavorite);
+        setCurrentUserEventId(userEventId);
+    }, [isFavorite, userEventId]);
 
     const handleFavorite = () => {
         if (!isAuthenticated) {
             navigate("/login");
             return;
         }
+
+        if (isProcessing) {
+            return;
+        }
+
+        setIsProcessing(true);
+
         if (!isFavorited) {
             const iri = event.provider ?  `/api/events/${event.id}` : `/api/custom_events/${event.id}`
             console.log("favorite", event);
@@ -20,19 +34,26 @@ export default function Event({ event, isFavorite, isAuthenticated = true, userE
                 event: iri
             }).then(response => {
                 console.log(response.data);
+                setCurrentUserEventId(response.data.user_event);
+                setFavorite(true);
             }).catch(error => {
                 console.error(error);
+            }).finally(() => {
+                setIsProcessing(false);
             });
         } else {
             console.log("not favorite", event);
-            useAxios.delete(`/api/user_events/${userEventId}`)
+            useAxios.delete(`/api/user_events/${currentUserEventId}`)
             .then(response => {
                 console.log(response.data);
+                setCurrentUserEventId(null);
+                setFavorite(false);
             }).catch(error => {
                 console.error(error);
+            }).finally(() => {
+                setIsProcessing(false);
             });
         }
-        setFavorite(!isFavorited);
     };
 
     return (
@@ -46,7 +67,8 @@ export default function Event({ event, isFavorite, isAuthenticated = true, userE
 
             <button
                 onClick={handleFavorite}
-                className="absolute top-3 right-3 text-red-500 hover:text-red-600 focus:outline-none"
+                disabled={isProcessing}
+                className={`absolute top-3 right-3 text-red-500 hover:text-red-600 focus:outline-none ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
                 style={{width: 30, height: 30}}
             >
                 {

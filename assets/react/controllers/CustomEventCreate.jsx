@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import useAxios from "../helpers/useAxios.jsx";
 
 export default function CustomEventCreate() {
     const [formData, setFormData] = useState({
@@ -53,7 +53,7 @@ export default function CustomEventCreate() {
         }
         setLoading(true);
         try {
-            await axios.post("/api/custom_events", formData, {
+            await useAxios.post("/api/custom_events", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

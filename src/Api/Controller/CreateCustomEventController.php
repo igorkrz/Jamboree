@@ -16,8 +16,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 final class CreateCustomEventController extends AbstractController
@@ -31,13 +31,19 @@ final class CreateCustomEventController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[CurrentUser] ?User $user, Request $request): JsonResponse
-    {
+    public function __invoke(
+        Request $request,
+        #[CurrentUser] ?User $user = null,
+        #[MapUploadedFile] ?UploadedFile $file = null,
+    ): JsonResponse {
         $customEvent = $this->customEventFactory->create();
         $form = $this->createForm(CustomEventType::class, $customEvent);
 
-        $file = $this->getFile($request);
-        $submittedData = $file === null ? $request->request->all() : $request->request->all() + $this->setFileData($file);
+        $submittedData = $request->request->all();
+
+        if ($file instanceof UploadedFile) {
+            $submittedData['picture']['file']['file'] = $file;
+        }
 
         $form->submit($submittedData);
 
@@ -63,29 +69,6 @@ final class CreateCustomEventController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json(['custom_event' => $customEvent->getId()->toRfc4122()]);
-    }
-
-    private function getFile(Request $request): ?UploadedFile
-    {
-        $file = $request->files->get('file');
-
-        if (!$file instanceof UploadedFile) {
-            return null;
-        }
-
-        return $file;
-    }
-
-    /**
-     * @return array<string, array<string, array<string, UploadedFile>>>|null
-     */
-    private function setFileData(?UploadedFile $file): ?array
-    {
-        if (!$file instanceof UploadedFile) {
-            return null;
-        }
-
-        return ['picture' => ['file' => ['file' => $file]]];
     }
 
     private function setPicture(CustomEvent $customEvent, ?UploadedFile $file = null): void

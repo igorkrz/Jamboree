@@ -84,13 +84,13 @@ final class SecurityController extends AbstractController
         $id = $request->query->get('id');
 
         if (null === $id) {
-            return $this->redirectToRoute('register');
+            return $this->redirect('/register');
         }
 
         $user = $this->userRepository->find($id);
 
         if (!$user instanceof User) {
-            return $this->redirectToRoute('register');
+            return $this->redirect('/register');
         }
 
         try {
@@ -98,12 +98,12 @@ final class SecurityController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $this->translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
 
-            return $this->redirectToRoute('register');
+            return $this->redirect('/register');
         }
 
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('register');
+        return $this->redirect('/');
     }
 
     #[Route(path: '/api/login', name: 'api_login_check', methods: [Request::METHOD_POST])]
@@ -122,12 +122,5 @@ final class SecurityController extends AbstractController
     public function logout(Request $request): JsonResponse
     {
         throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
-    }
-
-    #[Route(path: '/api/security/refresh', name: 'api_security_refresh', methods: [Request::METHOD_POST])]
-    public function refresh(): void
-    {
-        // This will be handled by gesdinet/jwt-refresh-token-bundle once installed
-        throw new LogicException('Not implemented yet.');
     }
 }

@@ -28,18 +28,18 @@ export default function CustomEvents() {
                 console.log(response.data);
                 const data = response.data;
 
-                if (data['hydra:view']) {
-                    const firstPage = data['hydra:view']['hydra:first'] ?? 1;
-                    const lastPage = data['hydra:view']['hydra:last'] ?? 1;
+                if (data['view']) {
+                    const firstPage = data['view']['first'] ?? 1;
+                    const lastPage = data['view']['last'] ?? 1;
 
                     firstPage === 1 ? setFirstPage(1) : setFirstPage(firstPage.match(/\d+$/)[0]);
                     lastPage === 1 ? setLastPage(1) : setLastPage(lastPage.match(/\d+$/)[0]);
                 }
 
-                const totalItems = data['hydra:totalItems'];
+                const totalItems = data['totalItems'];
 
                 setTotalItems(totalItems);
-                setEvents(data['hydra:member']);
+                setEvents(data['member']);
 
                 setLoading(false);
             })
@@ -68,7 +68,7 @@ export default function CustomEvents() {
             .then(response => {
                 console.log(response.data);
                 const data = response.data;
-                setUserEvents(data['hydra:member']);
+                setUserEvents(data['member']);
                 setLoading(false);
             })
             .catch(error => {
@@ -88,13 +88,15 @@ export default function CustomEvents() {
                     events.map((event) => {
                         console.log("EVENT", event);
                         console.log("USER EVENTS", userEvents)
-                        let favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
+                        const favoriteEvents = userEvents.filter((userEvent => userEvent.event && event.id === userEvent.event.id));
+                        const userEventId = favoriteEvents.length > 0 ? favoriteEvents[0].id : null;
 
                         return <Event
                             key={event.id}
                             name={event.name}
                             event={event}
                             isFavorite={favoriteEvents.length > 0}
+                            userEventId={userEventId}
                         />
                     })
                 }

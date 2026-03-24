@@ -30,7 +30,9 @@ use Symfony\Component\Uid\Ulid;
             uriTemplate: '/user_events/add',
             controller: AddUserEventController::class,
         ),
-        new Delete(),
+        new Delete(
+            security: 'object.getUser() === user'
+        ),
     ],
     normalizationContext: ['groups' => ['custom_event:read', 'event:read']],
     denormalizationContext: ['groups' => ['user_event:write']],

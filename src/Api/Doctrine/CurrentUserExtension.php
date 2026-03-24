@@ -8,10 +8,13 @@ use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use App\Entity\CustomEvent;
 use App\Entity\User;
 use App\Entity\UserEvent;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
+
+use function sprintf;
 
 final readonly class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -32,10 +35,13 @@ final readonly class CurrentUserExtension implements QueryCollectionExtensionInt
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
+        if (UserEvent::class !== $resourceClass && CustomEvent::class !== $resourceClass) {
+            return;
+        }
+
         /** @var ?User $user */
         $user = $this->security->getUser();
-
-        if (UserEvent::class !== $resourceClass || !$this->security->isGranted('ROLE_USER') || null === $user) {
+        if (!$user instanceof User) {
             return;
         }
 
