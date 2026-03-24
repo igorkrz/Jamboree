@@ -3,7 +3,6 @@ services:
         build:
             context: ./
             dockerfile: docker/build/Dockerfile
-            target: dev
         restart: always
         volumes:
             - ./:/app
@@ -49,7 +48,6 @@ services:
         build:
             context: ./
             dockerfile: docker/build/Dockerfile
-            target: dev
         restart: always
         command: php bin/console messenger:consume async -vv --memory-limit=128M --time-limit=3600
         depends_on:
@@ -74,26 +72,6 @@ services:
         environment:
             MP_SMTP_AUTH_ACCEPT_ANY: 1
             MP_SMTP_AUTH_ALLOW_INSECURE: 1
-
-    caddy:
-        image: caddy:2
-        restart: always
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile:ro
-            - caddy_data:/data
-            - caddy_config:/config
-        depends_on:
-            - app
-        networks:
-            - network
-
-volumes:
-    database_data:
-    caddy_data:
-    caddy_config:
 
 networks:
     network:
