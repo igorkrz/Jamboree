@@ -98,6 +98,7 @@ class CustomEvent extends AbstractEvent
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'events', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinTable(name: 'custom_event_tag')]
+    #[Groups(['custom_event:read'])]
     protected Collection $tags;
 
     public function getPicture(): ?CustomEventMediaObject

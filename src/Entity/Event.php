@@ -53,6 +53,7 @@ class Event extends AbstractEvent
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'events', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinTable(name: 'event_tag')]
+    #[Groups(['event:read'])]
     protected Collection $tags;
 
     public function getInternalCode(): ?string

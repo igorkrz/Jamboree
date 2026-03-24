@@ -3,95 +3,120 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAxios from "../helpers/useAxios.jsx";
 import useToken from "../helpers/useToken.jsx"
 import { ENDPOINTS } from "../../api/constants/Endpoints";
+import { EnvelopeIcon, LockClosedIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { useFlash } from "../context/FlashContext.jsx";
 
 export default function LoginForm() {
     const { setToken } = useToken();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { showFlash } = useFlash();
     
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await useAxios.post(ENDPOINTS.LOGIN, {
                 username: username,
                 password: password,
             });
             setToken(response.data.token);
+            showFlash("Welcome back!", "success");
             navigate("/");
             navigate(0);
         } catch (error) {
+            const message = error.response?.data?.message || "Invalid credentials. Please try again.";
+            showFlash(message, "error");
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
     return (
-        <div className="h-[100vh] items-center flex justify-center px-5 lg:px-0">
-            <div className="max-w-screen-xl bg-white border shadow sm:rounded-lg flex justify-center flex-1">
-                <div className="flex-1 bg-blue-900 text-center hidden md:flex">
-                    <div
-                        className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
-                        style={{
-                            backgroundImage: `url(https://www.tailwindtap.com/assets/common/marketing.svg)`,
-                        }}
-                    ></div>
+        <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+            <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                        Welcome Back
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+                        Please enter your details to sign in
+                    </p>
                 </div>
-                <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-                    <div className=" flex flex-col items-center">
-                        <div className="text-center">
-                            <h1 className="text-2xl xl:text-4xl font-extrabold text-blue-900">
-                                Sign In
-                            </h1>
+                
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <div className="rounded-md shadow-sm space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <EnvelopeIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                    type="email"
+                                    required
+                                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition-all"
+                                    placeholder="you@example.com"
+                                    onChange={e => setUsername(e.target.value)}
+                                />
+                            </div>
                         </div>
-                        <div className="w-full flex-1 mt-8">
-                            <div className="mx-auto max-w-xs flex flex-col gap-4">
-                                <form onSubmit={handleSubmit}>
-                                    <input
-                                        className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="email"
-                                        placeholder="Enter your email"
-                                        onChange={e => setUsername(e.target.value)}
-                                    />
-                                    <input
-                                        className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="password"
-                                        placeholder="Password"
-                                        onChange={e => setPassword(e.target.value)}
-                                    />
-                                    <button
-                                        className="mt-5 tracking-wide font-semibold bg-blue-900 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
-                                        type={"submit"}
-                                    >
-                                        <svg
-                                            className="w-6 h-6 -ml-2"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                            strokeLinecap="round"
-                                            stroke-linejoin="round"
-                                        >
-                                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                                            <circle cx="8.5" cy="7" r="4" />
-                                            <path d="M20 8v6M23 11h-6" />
-                                        </svg>
-                                        <span className="ml-3">Sign In</span>
-                                    </button>
-                                </form>
-                                <p className="mt-6 text-xs text-gray-600 text-center">
-                                    Don't have an account?{" "}
-                                    <Link
-                                        to={'/register/'}
-                                        className={"text-blue-900 font-semibold"}
-                                    >
-                                        Register here
-                                    </Link>
-                                </p>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <LockClosedIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input
+                                    type="password"
+                                    required
+                                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm transition-all"
+                                    placeholder="••••••••"
+                                    onChange={e => setPassword(e.target.value)}
+                                />
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <div>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gray-900 dark:bg-indigo-600 hover:bg-gray-800 dark:hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ${
+                                isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                            }`}
+                        >
+                            {isLoading ? (
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            ) : (
+                                <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                            )}
+                            {isLoading ? 'Signing in...' : 'Sign In'}
+                        </button>
+                    </div>
+
+                    <div className="text-center">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Don't have an account?{' '}
+                            <Link to="/register" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">
+                                Create an account
+                            </Link>
+                        </p>
+                    </div>
+                </form>
             </div>
-            <Outlet></Outlet>
+            <Outlet />
         </div>
     );
-};
+}

@@ -32,3 +32,6 @@ db-diff:
 
 sh:
 	$(DOCKER_COMPOSE_DEV) exec app bash
+
+assets-dev:
+	$(DOCKER_COMPOSE_DEV) exec app npm run build
