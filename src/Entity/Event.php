@@ -7,10 +7,10 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Api\Controller\CalendarController;
+use App\Api\Controller\ExportCalendarController;
 use App\Repository\EventRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -27,6 +27,11 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new GetCollection(
             uriTemplate: 'calendar',
             controller: CalendarController::class,
+        ),
+        new GetCollection(
+            uriTemplate: 'calendar/ics',
+            formats: ['ics' => ['text/calendar']],
+            controller: ExportCalendarController::class,
         ),
         new Get(),
     ],

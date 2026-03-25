@@ -6,6 +6,7 @@ namespace App\Api\Controller;
 
 use App\Entity as E;
 use App\Entity\User;
+use App\Repository\CustomEventRepository;
 use App\Repository\EventRepository;
 use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\SetDataEvent;
@@ -25,6 +26,7 @@ final class CalendarController extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepository,
+        private readonly CustomEventRepository $customEventRepository,
     ) {
     }
 
@@ -50,11 +52,38 @@ final class CalendarController extends AbstractController
             $this->createCalendarEvent($calendarEvent, $event);
         }
 
-        return array_map(fn (Event $event) => $event->toArray(), $calendarEvent->getEvents());
+        return array_map(function (Event $event) {
+            $data = $event->toArray();
+            $data['google_url'] = $this->generateGoogleCalendarUrl($event);
+
+            return $data;
+        }, $calendarEvent->getEvents());
+    }
+
+    private function generateGoogleCalendarUrl(Event $event): string
+    {
+        $start = $event->getStart()->format('Ymd');
+        $end = (clone $event->getStart())->modify('+1 day')->format('Ymd');
+
+        $params = [
+            'action' => 'TEMPLATE',
+            'text' => $event->getTitle(),
+            'dates' => "$start/$end",
+        ];
+
+        if (isset($event->getOptions()['description'])) {
+            $params['details'] = $event->getOptions()['description'];
+        }
+
+        if (isset($event->getOptions()['location'])) {
+            $params['location'] = $event->getOptions()['location'];
+        }
+
+        return 'https://www.google.com/calendar/render?' . http_build_query($params);
     }
 
     /**
-     * @return Collection<int|string, E\UserEvent>|E\Event[]
+     * @return array<array-key, E\UserEvent>|E\Contract\EventInterface>
      */
     private function getEvents(?E\User $user): Collection|array
     {
@@ -62,35 +91,51 @@ final class CalendarController extends AbstractController
             return $user->getEvents();
         }
 
-        return $this->eventRepository
-            ->getUpcomingEventsQueryBuilder('holdingDate', 'ASC')
-            ->getQuery()
-            ->getResult();
+        return array_merge(
+            $this->eventRepository
+                ->getUpcomingEventsQueryBuilder('holdingDate', 'ASC')
+                ->getQuery()
+                ->getResult(),
+            $this->customEventRepository
+                ->getUpcomingEventsQueryBuilder('holdingDate', 'ASC')
+                ->getQuery()
+                ->getResult()
+        );
     }
 
-    private function createCalendarEvent(SetDataEvent $calendarEvent, E\Event|E\UserEvent $event): void
+    private function createCalendarEvent(SetDataEvent $calendarEvent, E\Contract\EventInterface|E\UserEvent $event): void
     {
-        if ($event instanceof E\UserEvent) {
-            $calendarEvent->addEvent(new Event(
-                title: $event->getEvent()->getName(),
-                start: $event->getEvent()->getHoldingDate(),
-                resourceId: $event->getEvent()->getObjectIdentifier(),
-                options: ['url' => $this->resolveEventUrl($event)]
-            ));
+        $eventData = $event instanceof E\UserEvent ? $event->getEvent() : $event;
+        $options = [
+            'url' => $this->resolveEventUrl($event),
+            'description' => $eventData->getDescription(),
+        ];
 
-            return;
+        $location = $eventData->getLocation();
+        if ($location instanceof E\Location) {
+            $parts = array_filter([
+                $location->getVenue(),
+                $location->getAddressLine(),
+                $location->getCity(),
+                $location->getCountry(),
+            ]);
+            $options['location'] = implode(', ', $parts);
         }
 
         $calendarEvent->addEvent(new Event(
-            title: $event->getName(),
-            start: $event->getHoldingDate(),
-            resourceId: $event->getObjectIdentifier(),
-            options: ['url' => $this->resolveEventUrl($event)]
+            title: $eventData->getName(),
+            start: $eventData->getHoldingDate(),
+            resourceId: $eventData->getObjectIdentifier(),
+            options: $options,
         ));
     }
 
-    private function resolveEventUrl(E\Event|E\UserEvent $event): string
+    private function resolveEventUrl(E\Contract\EventInterface|E\UserEvent $event): string
     {
+        if ($event instanceof E\CustomEvent) {
+            return '/custom_events/' . $event->getId() . '/';
+        }
+
         if ($event instanceof E\Event) {
             return '/events/' . $event->getId() . '/';
         }

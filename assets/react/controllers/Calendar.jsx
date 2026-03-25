@@ -57,13 +57,30 @@ export default function Calendar() {
     ];
 
     const handleExport = (format) => {
+        if (format === 'ics') {
+            window.location.href = '/api/calendar/ics';
+            return;
+        }
+
+        if (format === 'google') {
+            const icsUrl = `${window.location.origin}/api/calendar/ics`;
+            const googleUrl = `https://www.google.com/calendar/render?cid=${encodeURIComponent(icsUrl)}`;
+            window.open(googleUrl, '_blank');
+            return;
+        }
+
         alert(`Exporting as ${format}... (Functionality coming soon)`);
     };
 
     const handleEventClick = (info) => {
-        if (info.event.url) {
-            info.jsEvent.preventDefault();
-            window.location.href = info.event.url;
+        if (info.jsEvent.target.classList.contains('fc-event-title-container') || 
+            info.jsEvent.target.classList.contains('fc-event-title') ||
+            info.jsEvent.target.closest('.fc-event-main')) {
+            
+            if (info.event.url) {
+                info.jsEvent.preventDefault();
+                window.location.href = info.event.url;
+            }
         }
     };
 
@@ -142,6 +159,33 @@ export default function Calendar() {
                             }}
                             eventClick={handleEventClick}
                             datesSet={handleDatesSet}
+                            eventContent={(eventInfo) => {
+                                const googleUrl = eventInfo.event.extendedProps.google_url;
+                                return (
+                                    <div className="flex items-center justify-between w-full px-1 py-0.5 group/event">
+                                        <div className="truncate flex-1">
+                                            <div className="fc-event-time font-bold text-[10px] leading-tight">
+                                                {eventInfo.timeText}
+                                            </div>
+                                            <div className="fc-event-title font-semibold text-[11px] leading-tight truncate">
+                                                {eventInfo.event.title}
+                                            </div>
+                                        </div>
+                                        {googleUrl && (
+                                            <a 
+                                                href={googleUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="hidden group-hover/event:flex ml-1 p-1 hover:bg-white/20 rounded-md transition-colors"
+                                                title="Add to Google Calendar"
+                                            >
+                                                <InformationCircleIcon className="h-4 w-4 text-white" />
+                                            </a>
+                                        )}
+                                    </div>
+                                );
+                            }}
                             height="auto"
                             aspectRatio={1.35}
                             dayMaxEvents={true}
