@@ -79,7 +79,7 @@ final class CalendarController extends AbstractController
             $params['location'] = $event->getOptions()['location'];
         }
 
-        return 'https://www.google.com/calendar/render?' . http_build_query($params);
+        return 'https://calendar.google.com/calendar/render?' . http_build_query($params);
     }
 
     /**

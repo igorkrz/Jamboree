@@ -64,7 +64,7 @@ export default function Calendar() {
 
         if (format === 'google') {
             const icsUrl = `${window.location.origin}/api/calendar/ics`;
-            const googleUrl = `https://www.google.com/calendar/render?cid=${encodeURIComponent(icsUrl)}`;
+            const googleUrl = `https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=${encodeURIComponent(icsUrl)}`;
             window.open(googleUrl, '_blank');
             return;
         }
