@@ -20,7 +20,6 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -113,7 +112,7 @@ final class SecurityController extends AbstractController
     }
 
     #[Route(path: '/api/security/login_state', name: 'api_security_login_state', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function loginState(#[CurrentUser] ?User $user, Request $request): JsonResponse
+    public function loginState(): JsonResponse
     {
         return $this->json($this->isGranted('ROLE_USER'));
     }

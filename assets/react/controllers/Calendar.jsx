@@ -17,7 +17,14 @@ export default function Calendar() {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState(localStorage.getItem('calendar_date') || new Date().toISOString());
-    
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        useAxios.get('/api/security/login_state')
+            .then(response => setIsLoggedIn(response.data))
+            .catch(() => setIsLoggedIn(false));
+    }, []);
+
     let start = new Date(currentDate);
     start = start.toLocaleDateString();
 
@@ -64,7 +71,7 @@ export default function Calendar() {
 
         if (format === 'google') {
             const icsUrl = `${window.location.origin}/api/calendar/ics`;
-            const googleUrl = `https://calendar.google.com/calendar/u/0/r/settings/addbyurl?cid=${encodeURIComponent(icsUrl)}`;
+            const googleUrl = `https://calendar.google.com/calendar/u/0/r?cid=webcal://${icsUrl}`;
             window.open(googleUrl, '_blank');
             return;
         }
@@ -98,44 +105,46 @@ export default function Calendar() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <Menu as="div" className="relative">
-                        <MenuButton className="inline-flex items-center gap-x-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-indigo-500 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
-                            <ArrowDownTrayIcon className="h-5 w-5" />
-                            Export Events
-                            <ChevronDownIcon className="h-4 w-4 opacity-70" />
-                        </MenuButton>
+                    {isLoggedIn && (
+                        <Menu as="div" className="relative">
+                            <MenuButton className="inline-flex items-center gap-x-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-indigo-500 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                                <ArrowDownTrayIcon className="h-5 w-5" />
+                                Export Events
+                                <ChevronDownIcon className="h-4 w-4 opacity-70" />
+                            </MenuButton>
 
-                        <Transition
-                            as={Fragment}
-                            enter="transition ease-out duration-100"
-                            enterFrom="transform opacity-0 scale-95"
-                            enterTo="transform opacity-100 scale-100"
-                            leave="transition ease-in duration-75"
-                            leaveFrom="transform opacity-100 scale-100"
-                            leaveTo="transform opacity-0 scale-95"
-                        >
-                            <MenuItems className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-2xl bg-white dark:bg-gray-800 p-1.5 shadow-2xl ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none">
-                                <div className="px-3 py-2 border-b border-gray-50 dark:border-gray-700 mb-1">
-                                    <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Select Format</p>
-                                </div>
-                                {exportFormats.map((item) => (
-                                    <MenuItem key={item.format}>
-                                        {({ active }) => (
-                                            <button
-                                                onClick={() => handleExport(item.format)}
-                                                className={`${
-                                                    active ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-200'
-                                                } group flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition-colors`}
-                                            >
-                                                <item.icon className={`mr-3 h-5 w-5 ${active ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500'}`} />
-                                                {item.name}
-                                            </button>
-                                        )}
-                                    </MenuItem>
-                                ))}
-                            </MenuItems>
-                        </Transition>
-                    </Menu>
+                            <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-100"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-75"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                            >
+                                <MenuItems className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-2xl bg-white dark:bg-gray-800 p-1.5 shadow-2xl ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none">
+                                    <div className="px-3 py-2 border-b border-gray-50 dark:border-gray-700 mb-1">
+                                        <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Select Format</p>
+                                    </div>
+                                    {exportFormats.map((item) => (
+                                        <MenuItem key={item.format}>
+                                            {({ active }) => (
+                                                <button
+                                                    onClick={() => handleExport(item.format)}
+                                                    className={`${
+                                                        active ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-200'
+                                                    } group flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition-colors`}
+                                                >
+                                                    <item.icon className={`mr-3 h-5 w-5 ${active ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500'}`} />
+                                                    {item.name}
+                                                </button>
+                                            )}
+                                        </MenuItem>
+                                    ))}
+                                </MenuItems>
+                            </Transition>
+                        </Menu>
+                    )}
                 </div>
             </div>
 

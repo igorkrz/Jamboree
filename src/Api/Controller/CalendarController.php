@@ -52,9 +52,11 @@ final class CalendarController extends AbstractController
             $this->createCalendarEvent($calendarEvent, $event);
         }
 
-        return array_map(function (Event $event) {
+        return array_map(function (Event $event) use ($user) {
             $data = $event->toArray();
-            $data['google_url'] = $this->generateGoogleCalendarUrl($event);
+            if ($user instanceof User) {
+                $data['google_url'] = $this->generateGoogleCalendarUrl($event);
+            }
 
             return $data;
         }, $calendarEvent->getEvents());
@@ -99,7 +101,7 @@ final class CalendarController extends AbstractController
             $this->customEventRepository
                 ->getUpcomingEventsQueryBuilder('holdingDate', 'ASC')
                 ->getQuery()
-                ->getResult()
+                ->getResult(),
         );
     }
 
