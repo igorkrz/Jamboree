@@ -25,7 +25,7 @@ export default function UserMenu() {
                         className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
                     />
                     <div className="hidden md:flex flex-col items-start leading-tight">
-                        <span className="text-xs font-semibold text-gray-900 dark:text-gray-100">{user?.username || 'User'}</span>
+                        <span className="text-xs font-semibold text-gray-900 dark:text-gray-100">{user?.email || 'User'}</span>
                         <span className="text-[10px] text-gray-500 dark:text-gray-400">Account</span>
                     </div>
                     <ChevronDownIcon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" />

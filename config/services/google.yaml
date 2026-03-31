@@ -1,3 +1,9 @@
+parameters:
+    locale: 'hr'
+    google_bucket_url: '%env(GOOGLE_BUCKET_URL)%'
+    google_client_id: '%env(GOOGLE_CLIENT_ID)%'
+    google_client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+
 services:
     _defaults:
         autowire: true
@@ -5,4 +11,4 @@ services:
         public: false
 
     Google\Cloud\Storage\StorageClient:
-        factory: ['@App\Service\Google', 'getStorageClient']
+        factory: ['@App\Service\Google\GoogleStorage', 'getStorageClient']

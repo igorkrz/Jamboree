@@ -20,6 +20,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -74,10 +75,10 @@ final class SecurityController extends AbstractController
             return $this->json('success');
         }
 
-        return $this->json($violations, 422);
+        return $this->json($violations, Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Route('/verify/email', name: 'verify_email')]
+    #[Route('/verify/email', name: 'verify_email', methods: [Request::METHOD_GET])]
     public function verifyUserEmail(Request $request): Response
     {
         $id = $request->query->get('id');
@@ -87,7 +88,6 @@ final class SecurityController extends AbstractController
         }
 
         $user = $this->userRepository->find($id);
-
         if (!$user instanceof User) {
             return $this->redirect('/register');
         }
@@ -112,9 +112,13 @@ final class SecurityController extends AbstractController
     }
 
     #[Route(path: '/api/security/login_state', name: 'api_security_login_state', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function loginState(): JsonResponse
+    public function loginState(#[CurrentUser] ?User $user): JsonResponse
     {
-        return $this->json($this->isGranted('ROLE_USER'));
+        if (!$user instanceof User) {
+            return $this->json(false);
+        }
+
+        return $this->json($user, Response::HTTP_OK, [], ['groups' => 'user:read']);
     }
 
     #[Route(path: '/api/logout', name: 'api_security_logout', methods: [Request::METHOD_GET, Request::METHOD_POST])]

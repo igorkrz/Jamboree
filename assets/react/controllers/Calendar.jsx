@@ -3,33 +3,30 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useAxios from "../helpers/useAxios.jsx";
+import { useFlash } from "../context/FlashContext.jsx";
+import { useSelector } from "react-redux";
 import { Menu, Transition, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { 
-    CalendarIcon, 
-    ChevronDownIcon, 
+import {
     ArrowDownTrayIcon,
-    DocumentTextIcon,
-    TableCellsIcon,
-    InformationCircleIcon
+    ArrowPathIcon,
+    CalendarIcon, 
+    ChevronDownIcon,
+    TrashIcon,
+    InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Calendar() {
+    const { isAuthenticated: isLoggedIn } = useSelector((state) => state.authentication);
+    const { showFlash } = useFlash();
     const [events, setEvents] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState(localStorage.getItem('calendar_date') || new Date().toISOString());
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        useAxios.get('/api/security/login_state')
-            .then(response => setIsLoggedIn(response.data))
-            .catch(() => setIsLoggedIn(false));
-    }, []);
 
     let start = new Date(currentDate);
     start = start.toLocaleDateString();
 
     useEffect(() => {
-        setIsLoading(true);
+        setLoading(true);
         useAxios.get(`/api/calendar`, {
             params: {
                 start,
@@ -47,7 +44,7 @@ export default function Calendar() {
                 setEvents(formattedEvents);
             })
             .catch(error => console.error(error))
-            .finally(() => setIsLoading(false));
+            .finally(() => setLoading(false));
     }, [start]);
 
     const handleDatesSet = (dateInfo) => {
@@ -58,25 +55,97 @@ export default function Calendar() {
 
     const exportFormats = [
         { name: 'iCalendar (.ics)', icon: CalendarIcon, format: 'ics' },
-        { name: 'Google Calendar', icon: InformationCircleIcon, format: 'google' },
-        { name: 'CSV Export', icon: TableCellsIcon, format: 'csv' },
-        { name: 'PDF Schedule', icon: DocumentTextIcon, format: 'pdf' },
+        { name: 'Google Calendar (Add)', icon: InformationCircleIcon, format: 'google' },
+        { name: 'Google Calendar (Sync)', icon: ArrowPathIcon, format: 'google_sync' },
+        { name: 'Google Calendar (Delete)', icon: TrashIcon, format: 'google_delete' },
     ];
 
-    const handleExport = (format) => {
+    const handleExport = async (format) => {
         if (format === 'ics') {
-            window.location.href = '/api/calendar/ics';
-            return;
+            try {
+                const response = await useAxios.get('/api/calendar/ics', {
+                    responseType: 'blob'
+                });
+
+                const blob = new Blob([response.data], {type: 'text/calendar'});
+                const url = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'jamboree_calendar.ics';
+                document.body.appendChild(link);
+                link.click();
+
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error(error);
+
+                let message = 'Download failed';
+
+                if (error.response?.data instanceof Blob) {
+                    try {
+                        const text = await error.response.data.text();
+
+                        try {
+                            const json = JSON.parse(text);
+                            message = json.message || json.error || message;
+                        } catch {
+                            message = text;
+                        }
+
+                    } catch {
+                        message = 'Unable to read error response';
+                    }
+                }
+                showFlash(message, 'error');
+                return;
+            }
         }
 
         if (format === 'google') {
-            const icsUrl = `${window.location.origin}/api/calendar/ics`;
-            const googleUrl = `https://calendar.google.com/calendar/u/0/r?cid=webcal://${icsUrl}`;
-            window.open(googleUrl, '_blank');
+            try {
+                const response = await useAxios.post(
+                    '/api/calendar/google',
+                    {'summary': 'Jamboree'},
+                    {'headers': {'Content-Type': 'application/json'}}
+                );
+
+                showFlash(response.data.message ?? 'Google Calendar created successfully.', 'success');
+            } catch (error) {
+                showFlash(error.response?.data?.message ?? 'Failed to create Google Calendar.', 'error');
+            }
+
             return;
         }
 
-        alert(`Exporting as ${format}... (Functionality coming soon)`);
+        if (format === 'google_sync') {
+            try {
+                const response = await useAxios.post(
+                    '/api/calendar/google/sync',
+                    {},
+                    {'headers': {'Content-Type': 'application/json'}}
+                );
+
+                showFlash(response.data.message ?? 'Google Calendar synced successfully.', 'success');
+            } catch (error) {
+                showFlash(error.response?.data?.message ?? 'Failed to sync Google Calendar.', 'error');
+            }
+        }
+
+        if (format === 'google_delete') {
+            try {
+                const response = await useAxios.delete(
+                    '/api/calendar/google',
+                    {},
+                    {'headers': {'Content-Type': 'application/json'}}
+                );
+
+                showFlash(response.data.message ?? 'Google Calendar deleted successfully.', 'success');
+            } catch (error) {
+                showFlash(error.response?.data?.message ?? 'Failed to delete Google Calendar.', 'error');
+            }
+        }
     };
 
     const handleEventClick = (info) => {

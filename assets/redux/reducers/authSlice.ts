@@ -59,7 +59,10 @@ export const checkLogin = () => async (dispatch) => {
             dispatch(setUser(null));
             dispatch(setToken(null));
         } else {
-            dispatch(setIsAuthenticated(response.data));
+            dispatch(setIsAuthenticated(true));
+            if (response.data !== null) {
+                dispatch(setUser(response.data));
+            }
         }
     } catch (err: any) {
         sessionStorage.removeItem('access_token');

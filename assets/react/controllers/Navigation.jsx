@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 
 export default function Navigation() {
-    const { isAuthenticated } = useSelector(
+    const { isAuthenticated, isLoginChecked } = useSelector(
         (state) => state.authentication
     );
     const location = useLocation();
@@ -105,15 +105,17 @@ export default function Navigation() {
                                 <MoonIcon className="h-5 w-5" />
                             )}
                         </button>
-                        {isAuthenticated ? (
-                            <UserMenu />
-                        ) : (
-                            <Link
-                                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all active:scale-95"
-                                to="/login"
-                            >
-                                Sign in
-                            </Link>
+                        {isLoginChecked && (
+                            isAuthenticated ? (
+                                <UserMenu />
+                            ) : (
+                                <Link
+                                    className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all active:scale-95"
+                                    to="/login"
+                                >
+                                    Sign in
+                                </Link>
+                            )
                         )}
                     </div>
                 </div>

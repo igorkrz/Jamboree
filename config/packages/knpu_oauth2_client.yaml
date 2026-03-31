@@ -1,0 +1,10 @@
+knpu_oauth2_client:
+    clients:
+        google:
+            type: google
+            client_id: '%google_client_id%'
+            client_secret: '%google_client_secret%'
+            redirect_route: connect_google_check
+            redirect_params: {}
+            access_type: offline
+            use_state: false

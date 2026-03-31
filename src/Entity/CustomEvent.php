@@ -22,8 +22,8 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 #[ORM\Table(name: 'custom_event')]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Get(),
+        new GetCollection(security: 'is_granted("ROLE_USER")'),
+        new Get(security: 'is_granted("ROLE_USER") and object.getUser() === user'),
         new Post(
             inputFormats: ['multipart' => ['multipart/form-data']],
             controller: CreateCustomEventController::class,

@@ -18,16 +18,9 @@ final class ExportCalendarController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[CurrentUser] ?User $user, Request $request): Response
+    public function __invoke(#[CurrentUser] User $user, Request $request): Response
     {
-        if (!$user instanceof User) {
-            return new Response('Unauthorized', 401);
-        }
-
-        $events = $user->getEvents();
-        $ical = $this->calendarExportService->exportToIcal($events);
-
-        return new Response($ical, 200, [
+        return new Response($this->calendarExportService->exportToIcal($user->getEvents()), Response::HTTP_OK, [
             'Content-Type' => 'text/calendar; charset=utf-8',
             'Content-Disposition' => 'attachment; filename="jamboree_calendar.ics"',
         ]);

@@ -11,13 +11,17 @@ when@dev:
 
 when@prod:
     parameters:
-        public_upload_dir: '%env(GOOGLE_BUCKET_URL)%'
-        public_read_dir: '%env(GOOGLE_BUCKET_URL)%'
+        public_upload_dir: '%google_bucket_url%'
+        public_read_dir: '%google_bucket_url%'
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            'string $googleClientId': '%google_client_id%'
+            'string $googleClientSecret': '%google_client_secret%'
+            'string $projectDir': '%kernel.project_dir%'
 
     App\:
         resource: '../src/'
@@ -28,8 +32,3 @@ services:
     _instanceof:
         App\Service\Scraper\ListScraperInterface:
             tags: ['app.list_scraper']
-
-    App\Manager\MediaManager:
-        arguments:
-            $imagineFilterService: '@liip_imagine.service.filter'
-            $projectDir: '%kernel.project_dir%'

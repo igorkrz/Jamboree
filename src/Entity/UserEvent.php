@@ -23,16 +23,12 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Table(name: 'user_event')]
 #[ApiResource(
     operations: [
-        new GetCollection(
-            security: 'is_granted("ROLE_USER")',
-        ),
+        new GetCollection(security: 'is_granted("ROLE_USER")'),
         new Post(
             uriTemplate: '/user_events/add',
             controller: AddUserEventController::class,
         ),
-        new Delete(
-            security: 'object.getUser() === user'
-        ),
+        new Delete(security: 'is_granted("ROLE_USER") and object.getUser() === user'),
     ],
     normalizationContext: ['groups' => ['custom_event:read', 'event:read']],
     denormalizationContext: ['groups' => ['user_event:write']],

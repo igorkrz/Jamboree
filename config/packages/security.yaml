@@ -12,8 +12,8 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        api:
-            pattern: ^/api
+        main:
+            lazy: true
             stateless: true
             provider: user_provider
             json_login:
@@ -21,6 +21,9 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             jwt: ~
+            custom_authenticators:
+                - App\Security\GoogleAuthenticator
+            entry_point: jwt
             logout:
                 path: api_security_logout
 
@@ -37,11 +40,9 @@ security:
         - { path: ^/api/logout, role: PUBLIC_ACCESS }
         - { path: ^/api/login_check, role: PUBLIC_ACCESS }
         - { path: ^/api/security/login_state, roles: PUBLIC_ACCESS }
-        - { path: ^/user, roles: ROLE_USER }
-        - { path: ^/custom_events, roles: ROLE_USER }
-#        - { path: ^/user/events/{id}, roles:}
-#         - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/events/calendar/ics, roles: PUBLIC_ACCESS }
+        - { path: ^/google/connect, role: PUBLIC_ACCESS }
+        - { path: ^/google/callback, role: PUBLIC_ACCESS }
 
 when@test:
     security:

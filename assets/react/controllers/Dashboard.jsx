@@ -42,7 +42,7 @@ export default function Dashboard() {
             <div className="relative overflow-hidden rounded-3xl bg-indigo-600 px-6 py-16 sm:px-12 sm:py-20 shadow-2xl mb-12">
                 <div className="relative z-10 max-w-2xl text-left">
                     <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl mb-6">
-                        Welcome back, {user?.username || 'Explorer'}!
+                        Welcome back, {user?.firstName || 'Explorer'}!
                     </h1>
                     <p className="text-lg text-indigo-100 mb-8 leading-relaxed">
                         Discover the most exciting events happening around you. From concerts to workshops, find your next adventure with Jamboree.
