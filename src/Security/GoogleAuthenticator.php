@@ -66,13 +66,15 @@ final class GoogleAuthenticator extends OAuth2Authenticator
                     if (!$user instanceof User) {
                         $user = new User();
                         $user->setEmail($userIdentifier);
-                        $user->setFirstName($googleUser->getFirstName());
-                        $user->setLastName($googleUser->getLastName());
-                        $user->setVerified($googleUser->getEmailVerified());
                         $user->setPassword(bin2hex(random_bytes(16)));
-
-                        $this->userRepository->add($user);
                     }
+
+                    $user->setFirstName($googleUser->getFirstName());
+                    $user->setLastName($googleUser->getLastName());
+                    $user->setPicture($googleUser->getAvatar());
+                    $user->setVerified($googleUser->getEmailVerified());
+
+                    $this->userRepository->add($user);
 
                     $this->googleAuthService->saveToken($user, $accessToken);
 

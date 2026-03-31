@@ -21,7 +21,7 @@ export default function UserMenu() {
                     <span className="sr-only">Open user menu</span>
                     <img
                         alt=""
-                        src="https://images.unsplash.com/vector-1738312097380-45562da00459?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        src={user?.picture || "https://images.unsplash.com/vector-1738312097380-45562da00459?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
                         className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
                     />
                     <div className="hidden md:flex flex-col items-start leading-tight">

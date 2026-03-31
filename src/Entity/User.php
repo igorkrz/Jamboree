@@ -49,6 +49,10 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
     #[Groups(['user:read'])]
     protected ?string $lastName = null;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['user:read'])]
+    protected ?string $picture = null;
+
     #[ORM\Column(type: 'boolean')]
     protected bool $isVerified = false;
 
@@ -118,6 +122,18 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
     public function setLastName(?string $lastName = null): static
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture = null): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }
