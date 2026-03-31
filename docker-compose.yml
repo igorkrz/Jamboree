@@ -3,6 +3,7 @@ services:
         build:
             context: ./
             dockerfile: docker/build/Dockerfile
+            target: dev
         restart: always
         volumes:
             - ./:/app
