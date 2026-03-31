@@ -13,25 +13,24 @@ use Pagerfanta\Pagerfanta;
 use App\Entity\Contract\ResourceInterface;
 
 /**
- * @property EntityManagerInterface $_em
- * @property ClassMetadata          $_class
- *
- * @method QueryBuilder createQueryBuilder(string $alias, string $indexBy = null)
- * @method ?object      find($id, $lockMode = null, $lockVersion = null)
+ * @method EntityManagerInterface getEntityManager()
+ * @method ClassMetadata          getClassMetadata()
+ * @method QueryBuilder           createQueryBuilder(string $alias, string $indexBy = null)
+ * @method ?object                find($id, $lockMode = null, $lockVersion = null)
  */
 trait ResourceRepositoryTrait
 {
     public function add(ResourceInterface $resource): void
     {
-        $this->_em->persist($resource);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($resource);
+        $this->getEntityManager()->flush();
     }
 
     public function remove(ResourceInterface $resource): void
     {
         if (null !== $this->find($resource->getId())) {
-            $this->_em->remove($resource);
-            $this->_em->flush();
+            $this->getEntityManager()->remove($resource);
+            $this->getEntityManager()->flush();
         }
     }
 
@@ -71,7 +70,7 @@ trait ResourceRepositoryTrait
     protected function applyCriteria(QueryBuilder $queryBuilder, array $criteria = []): void
     {
         foreach ($criteria as $property => $value) {
-            if (!in_array($property, array_merge($this->_class->getAssociationNames(), $this->_class->getFieldNames()), true)) {
+            if (!in_array($property, array_merge($this->getClassMetadata()->getAssociationNames(), $this->getClassMetadata()->getFieldNames()), true)) {
                 continue;
             }
 
@@ -97,7 +96,7 @@ trait ResourceRepositoryTrait
     protected function applySorting(QueryBuilder $queryBuilder, array $sorting = []): void
     {
         foreach ($sorting as $property => $order) {
-            if (!in_array($property, array_merge($this->_class->getAssociationNames(), $this->_class->getFieldNames()), true)) {
+            if (!in_array($property, array_merge($this->getClassMetadata()->getAssociationNames(), $this->getClassMetadata()->getFieldNames()), true)) {
                 continue;
             }
 

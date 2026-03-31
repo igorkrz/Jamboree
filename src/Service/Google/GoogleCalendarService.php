@@ -8,7 +8,7 @@ use App\Entity\Location;
 use App\Entity\User;
 use App\Entity\UserCalendar;
 use App\Entity\UserEvent;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserCalendarRepository;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ final class GoogleCalendarService
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly GoogleAuthService $googleAuthService,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly UserCalendarRepository $userCalendarRepository,
     ) {
     }
 
@@ -205,8 +205,7 @@ final class GoogleCalendarService
             ->setSummary($data['summary'])
             ->setEtag($data['etag']);
 
-        $this->entityManager->persist($userCalendar);
-        $this->entityManager->flush();
+        $this->userCalendarRepository->add($userCalendar);
 
         return $userCalendar;
     }

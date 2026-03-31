@@ -7,7 +7,6 @@ namespace App\Security;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\Google\GoogleAuthService;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use KnpU\OAuth2ClientBundle\Client\Provider\GoogleClient;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
@@ -37,7 +36,6 @@ final class GoogleAuthenticator extends OAuth2Authenticator
         private readonly GoogleAuthService $googleAuthService,
         private readonly JWTTokenManagerInterface $jwtTokenManager,
         private readonly UserRepository $userRepository,
-        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -73,11 +71,10 @@ final class GoogleAuthenticator extends OAuth2Authenticator
                         $user->setVerified($googleUser->getEmailVerified());
                         $user->setPassword(bin2hex(random_bytes(16)));
 
-                        $this->entityManager->persist($user);
+                        $this->userRepository->add($user);
                     }
 
                     $this->googleAuthService->saveToken($user, $accessToken);
-                    $this->entityManager->flush();
 
                     return $user;
                 }),

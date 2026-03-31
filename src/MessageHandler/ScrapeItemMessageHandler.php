@@ -12,7 +12,6 @@ use App\Repository\EventRepository;
 use App\Service\Scraper\Item\DirtyOldItemScraper;
 use App\Service\Scraper\Item\EventimItemScraper;
 use App\Service\Scraper\Item\HangtimeItemScraper;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Throwable;
@@ -23,7 +22,6 @@ use function gethostname;
 final readonly class ScrapeItemMessageHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private EventRepository $eventRepository,
         private EventFactory $eventFactory,
         private DirtyOldItemScraper $dirtyOldItemScraper,
@@ -59,8 +57,7 @@ final readonly class ScrapeItemMessageHandler
                 $event = $this->eventFactory->createFromDto($dto);
             }
 
-            $this->entityManager->persist($event);
-            $this->entityManager->flush();
+            $this->eventRepository->add($event);
 
             $this->logger->info('Successfully scraped item', [
                 'internalCode' => $dto->internalCode,

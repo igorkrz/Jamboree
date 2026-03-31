@@ -7,8 +7,8 @@ namespace App\Service\Google;
 use App\Entity\User;
 use App\Entity\UserOAuthToken;
 use App\Enum\OAuthProvider;
+use App\Repository\UserOAuthTokenRepository;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -22,7 +22,7 @@ final class GoogleAuthService
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly UserOAuthTokenRepository $userOAuthTokenRepository,
         private readonly string $googleClientId,
         private readonly string $googleClientSecret,
     ) {
@@ -76,7 +76,7 @@ final class GoogleAuthService
                 $token->setRefreshToken($data['refresh_token']);
             }
 
-            $this->entityManager->flush();
+            $this->userOAuthTokenRepository->add($token);
 
             return $token->getAccessToken();
         } catch (Exception) {
@@ -102,7 +102,6 @@ final class GoogleAuthService
             $userToken = new UserOAuthToken();
             $userToken->setUser($user);
             $userToken->setProvider(OAuthProvider::GOOGLE);
-            $this->entityManager->persist($userToken);
             $user->addOAuthToken($userToken);
         }
 
@@ -113,6 +112,6 @@ final class GoogleAuthService
 
         $userToken->setExpiresAt(new DateTimeImmutable('+' . (int) $accessToken->getExpires() . ' seconds'));
 
-        $this->entityManager->flush();
+        $this->userOAuthTokenRepository->add($userToken);
     }
 }

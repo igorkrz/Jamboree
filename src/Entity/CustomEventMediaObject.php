@@ -7,13 +7,14 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
+use App\Repository\CustomEventMediaObjectRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[Vich\Uploadable]
-#[ORM\Entity()]
+#[ORM\Entity(repositoryClass: CustomEventMediaObjectRepository::class)]
 #[ORM\Table(name: 'custom_event_media_object')]
 #[ApiResource(
     operations: [

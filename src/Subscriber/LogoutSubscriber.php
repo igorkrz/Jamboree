@@ -6,7 +6,6 @@ namespace App\Subscriber;
 
 use App\Entity\UserOAuthToken;
 use App\Repository\UserOAuthTokenRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -22,7 +21,6 @@ final readonly class LogoutSubscriber implements EventSubscriberInterface
     public function __construct(
         private JWTTokenManagerInterface $jwtTokenManager,
         private UrlGeneratorInterface $urlGenerator,
-        private EntityManagerInterface $entityManager,
         private UserOAuthTokenRepository $userOAuthTokenRepository,
     ) {
     }
@@ -61,8 +59,7 @@ final readonly class LogoutSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->entityManager->remove($oauthToken);
-        $this->entityManager->flush();
+        $this->userOAuthTokenRepository->remove($oauthToken);
 
         $response = new RedirectResponse($this->urlGenerator->generate('home'));
 

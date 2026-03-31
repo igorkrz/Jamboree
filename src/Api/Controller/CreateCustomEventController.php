@@ -10,8 +10,10 @@ use App\Entity\User;
 use App\Factory\CustomEventFactory;
 use App\Factory\UserEventFactory;
 use App\Form\CustomEventType;
+use App\Repository\CustomEventMediaObjectRepository;
+use App\Repository\CustomEventRepository;
 use App\Repository\LocationRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserEventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +28,9 @@ final class CreateCustomEventController extends AbstractController
         private readonly CustomEventFactory $customEventFactory,
         private readonly LocationRepository $locationRepository,
         private readonly UserEventFactory $userEventFactory,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly CustomEventRepository $customEventRepository,
+        private readonly UserEventRepository $userEventRepository,
+        private readonly CustomEventMediaObjectRepository $customEventMediaObjectRepository,
         private readonly StorageInterface $storage,
     ) {
     }
@@ -57,16 +61,14 @@ final class CreateCustomEventController extends AbstractController
 
         $this->setPicture($customEvent, $file);
 
-        $this->entityManager->persist($customEvent);
-        $this->entityManager->flush();
+        $this->customEventRepository->add($customEvent);
 
         $userEvent = $this->userEventFactory->create();
         $userEvent
             ->setUser($user)
             ->setEvent($customEvent);
 
-        $this->entityManager->persist($userEvent);
-        $this->entityManager->flush();
+        $this->userEventRepository->add($userEvent);
 
         return $this->json(['custom_event' => $customEvent->getId()->toRfc4122()]);
     }
@@ -79,7 +81,7 @@ final class CreateCustomEventController extends AbstractController
         }
 
         $picture = $customEvent->getPicture();
-        $this->entityManager->persist($picture);
+        $this->customEventMediaObjectRepository->add($picture);
 
         $picture->setFilePath($this->storage->resolveUri($picture, 'file'));
     }

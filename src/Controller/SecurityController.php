@@ -9,7 +9,6 @@ use App\Factory\UserFactory;
 use App\Form\RegistrationType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
-use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,7 +33,6 @@ final class SecurityController extends AbstractController
         private readonly TranslatorInterface $translator,
         private readonly UserFactory $userFactory,
         private readonly UserRepository $userRepository,
-        private readonly EntityManagerInterface $entityManager,
         private readonly ValidatorInterface $validator,
     ) {
     }
@@ -59,8 +57,7 @@ final class SecurityController extends AbstractController
                 )
             );
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $this->userRepository->add($user);
 
             $this->emailVerifier->sendEmailConfirmation(
                 'verify_email',

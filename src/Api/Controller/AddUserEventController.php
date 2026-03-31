@@ -10,18 +10,16 @@ use App\Entity\CustomEvent;
 use App\Entity\Event;
 use App\Entity\User;
 use App\Entity\UserEvent;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserEventRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-#[AsController]
 final class AddUserEventController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private readonly UserEventRepository $userEventRepository,
         private readonly IriConverterInterface $iriConverter,
     ) {
     }
@@ -36,7 +34,7 @@ final class AddUserEventController extends AbstractController
 
         $userEvent->setEvent($event);
         $user->addUserEvent($userEvent);
-        $this->entityManager->flush();
+        $this->userEventRepository->add($userEvent);
 
         return $this->json(['user_event' => $userEvent->getId()->toRfc4122()]);
     }

@@ -6,7 +6,7 @@ namespace App\Api\Controller;
 
 use App\Entity\User;
 use App\Service\Google\GoogleCalendarService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserCalendarRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,11 +14,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-class DeleteGoogleCalendarController extends AbstractController
+final class DeleteGoogleCalendarController extends AbstractController
 {
     public function __construct(
         private readonly GoogleCalendarService $googleCalendarService,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly UserCalendarRepository $userCalendarRepository,
     ) {
     }
 
@@ -35,8 +35,7 @@ class DeleteGoogleCalendarController extends AbstractController
 
         try {
             $this->googleCalendarService->deleteCalendar($user, $calendar);
-            $this->entityManager->remove($calendar);
-            $this->entityManager->flush();
+            $this->userCalendarRepository->remove($calendar);
             return $this->json(['message' => 'Calendar deleted successfully'], Response::HTTP_NO_CONTENT);
         } catch (Exception $e) {
             return $this->json(['error' => 'Sync failed: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
