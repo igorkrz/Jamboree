@@ -38,19 +38,19 @@ export default function Dashboard() {
     ];
 
     return (
-        <div className="container mx-auto px-4 py-8 lg:py-12 min-h-screen transition-colors duration-300">
-            <div className="relative overflow-hidden rounded-3xl bg-indigo-600 px-6 py-16 sm:px-12 sm:py-20 shadow-2xl mb-12">
+        <div className="container mx-auto px-4 py-8 lg:py-12 min-h-screen transition-colors duration-300 overflow-x-hidden">
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-indigo-600 px-6 py-12 sm:px-12 sm:py-20 shadow-2xl mb-12">
                 <div className="relative z-10 max-w-2xl text-left">
-                    <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl mb-6">
+                    <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-6xl mb-6">
                         Welcome back, {user?.firstName || 'Explorer'}!
                     </h1>
-                    <p className="text-lg text-indigo-100 mb-8 leading-relaxed">
+                    <p className="text-base sm:text-lg text-indigo-100 mb-8 leading-relaxed">
                         Discover the most exciting events happening around you. From concerts to workshops, find your next adventure with Jamboree.
                     </p>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <Link
                             to="/events"
-                            className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-all active:scale-95"
+                            className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-all active:scale-95"
                         >
                             Browse Events
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
@@ -58,15 +58,15 @@ export default function Dashboard() {
                         {!isAuthenticated && (
                             <Link
                                 to="/register"
-                                className="inline-flex items-center rounded-full bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 transition-all active:scale-95"
+                                className="inline-flex items-center justify-center rounded-full bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 transition-all active:scale-95"
                             >
                                 Join Community
                             </Link>
                         )}
                     </div>
                 </div>
-                <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-indigo-500 opacity-20 blur-3xl"></div>
-                <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-purple-500 opacity-20 blur-3xl"></div>
+                <div className="absolute -top-24 -right-24 h-64 w-64 sm:h-96 sm:w-96 rounded-full bg-indigo-500 opacity-20 blur-3xl"></div>
+                <div className="absolute -bottom-24 -left-24 h-64 w-64 sm:h-96 sm:w-96 rounded-full bg-purple-500 opacity-20 blur-3xl"></div>
             </div>
 
             <div className="mb-16">
@@ -99,26 +99,26 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="bg-gray-900 dark:bg-indigo-950 rounded-3xl p-8 sm:p-16 text-center text-white relative overflow-hidden">
-                <div className="relative z-10">
-                    <h2 className="text-3xl font-bold mb-4">Never miss an event!</h2>
-                    <p className="text-gray-400 dark:text-indigo-200 mb-8 max-w-md mx-auto">
-                        Subscribe to our newsletter and get the latest updates on the most exciting events happening in your city.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            className="flex-1 rounded-full bg-white/10 border border-white/20 px-6 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <button className="rounded-full bg-indigo-600 px-8 py-3 font-bold hover:bg-indigo-500 transition-all active:scale-95">
-                            Subscribe
-                        </button>
-                    </div>
-                </div>
-                <SparklesIcon className="absolute top-10 right-10 h-32 w-32 text-indigo-500/10 rotate-12" />
-                <CalendarIcon className="absolute -bottom-10 -left-10 h-48 w-48 text-purple-500/10 -rotate-12" />
-            </div>
+            {/*<div className="bg-gray-900 dark:bg-indigo-950 rounded-3xl p-8 sm:p-16 text-center text-white relative overflow-hidden">*/}
+            {/*    <div className="relative z-10">*/}
+            {/*        <h2 className="text-3xl font-bold mb-4">Never miss an event!</h2>*/}
+            {/*        <p className="text-gray-400 dark:text-indigo-200 mb-8 max-w-md mx-auto">*/}
+            {/*            Subscribe to our newsletter and get the latest updates on the most exciting events happening in your city.*/}
+            {/*        </p>*/}
+            {/*        <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">*/}
+            {/*            <input*/}
+            {/*                type="email"*/}
+            {/*                placeholder="Enter your email"*/}
+            {/*                className="flex-1 rounded-full bg-white/10 border border-white/20 px-6 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"*/}
+            {/*            />*/}
+            {/*            <button className="rounded-full bg-indigo-600 px-8 py-3 font-bold hover:bg-indigo-500 transition-all active:scale-95">*/}
+            {/*                Subscribe*/}
+            {/*            </button>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*    <SparklesIcon className="absolute top-10 right-10 h-32 w-32 text-indigo-500/10 rotate-12" />*/}
+            {/*    <CalendarIcon className="absolute -bottom-10 -left-10 h-48 w-48 text-purple-500/10 -rotate-12" />*/}
+            {/*</div>*/}
         </div>
     );
 }

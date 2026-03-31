@@ -126,8 +126,9 @@ export default function Navigation() {
                     {navigation.map((item) => {
                         const active = isActive(item.href);
                         return (
-                            <Link
+                            <DisclosureButton
                                 key={item.name}
+                                as={Link}
                                 aria-current={active ? 'page' : undefined}
                                 className={classNames(
                                     active 
@@ -142,7 +143,7 @@ export default function Navigation() {
                                     'mr-3 h-6 w-6'
                                 )} />
                                 {item.name}
-                            </Link>
+                            </DisclosureButton>
                         );
                     })}
                 </div>
