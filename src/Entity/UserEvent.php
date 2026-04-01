@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
@@ -21,9 +25,15 @@ use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: UserEventRepository::class)]
 #[ORM\Table(name: 'user_event')]
+#[ApiFilter(DateFilter::class, properties: ['event.holdingDate', 'customEvent.holdingDate'])]
+#[ApiFilter(SearchFilter::class, properties: ['event.provider.name' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['event.holdingDate', 'customEvent.holdingDate', 'event.name', 'customEvent.name'])]
 #[ApiResource(
     operations: [
-        new GetCollection(security: 'is_granted("ROLE_USER")'),
+        new GetCollection(
+            security: 'is_granted("ROLE_USER")',
+            filters: [DateFilter::class, SearchFilter::class, OrderFilter::class]
+        ),
         new Post(
             uriTemplate: '/user_events/add',
             controller: AddUserEventController::class,
@@ -32,6 +42,7 @@ use Symfony\Component\Uid\Ulid;
     ],
     normalizationContext: ['groups' => ['custom_event:read', 'event:read']],
     denormalizationContext: ['groups' => ['user_event:write']],
+    order: ['event.holdingDate' => 'ASC', 'customEvent.holdingDate' => 'ASC'],
 )]
 class UserEvent implements ResourceInterface, TimestampableInterface
 {

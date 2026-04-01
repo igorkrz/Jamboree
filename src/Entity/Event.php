@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
@@ -17,13 +19,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table(name: 'event')]
 #[ApiFilter(DateFilter::class, properties: ['holdingDate'])]
+#[ApiFilter(SearchFilter::class, properties: ['provider.name' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['holdingDate', 'name'])]
 #[ApiResource(
     operations: [
-        new GetCollection(filters: [DateFilter::class]),
+        new GetCollection(filters: [DateFilter::class, SearchFilter::class, OrderFilter::class]),
         new Get(),
     ],
     normalizationContext: ['groups' => ['event:read']],
     denormalizationContext: ['groups' => ['event:write']],
+    order: ['holdingDate' => 'ASC'],
 )]
 class Event extends AbstractEvent
 {
