@@ -9,6 +9,8 @@ use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\TaggableTrait;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
+use DateTimeInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -52,12 +54,22 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
 
     #[ORM\Column(type: 'datetimetz', nullable: true)]
     #[Groups(['event:read', 'custom_event:write'])]
-    protected ?\DateTimeInterface $holdingDate = null;
+    protected ?DateTimeInterface $holdingDate = null;
 
     #[ORM\ManyToOne(targetEntity: Location::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id')]
     #[Groups(['event:read', 'custom_event:write'])]
     protected ?Location $location = null;
+
+    /**
+     * @var Collection<array-key, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'events', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'event_tag')]
+    #[ORM\JoinColumn(name: 'event_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
+    #[Groups(['event:read'])]
+    protected Collection $tags;
 
     public function __construct(?Ulid $id = null)
     {
@@ -125,12 +137,12 @@ abstract class AbstractEvent implements TimestampableInterface, EventInterface
         return $this;
     }
 
-    public function getHoldingDate(): ?\DateTimeInterface
+    public function getHoldingDate(): ?DateTimeInterface
     {
         return $this->holdingDate;
     }
 
-    public function setHoldingDate(?\DateTimeInterface $holdingDate = null): static
+    public function setHoldingDate(?DateTimeInterface $holdingDate = null): static
     {
         $this->holdingDate = $holdingDate;
 

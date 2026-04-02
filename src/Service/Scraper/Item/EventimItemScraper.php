@@ -52,6 +52,7 @@ final readonly class EventimItemScraper implements ItemScraperInterface
             'provider' => ScraperProvider::EVENTIM->value,
             'location' => null,
             'tags' => [],
+            'artists' => [],
         ]);
 
         $locationResolver = new OptionsResolver();
@@ -80,6 +81,7 @@ final readonly class EventimItemScraper implements ItemScraperInterface
             'url' => $data['link'] ?? null,
             'imageUrl' => $data['imageUrl'] ?? null,
             'tags' => array_map(static fn (array $category) => $category['name'], $data['categories'] ?? []),
+            'artists' => isset($data['groupName']) ? [$data['groupName']] : ($data['name'] ? [$data['name']] : []),
         ];
 
         $locationDto = $this->locationFactory->createDtoFromArray($locationResolver->resolve($location));

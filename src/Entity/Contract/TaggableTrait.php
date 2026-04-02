@@ -10,12 +10,12 @@ use Doctrine\Common\Collections\Collection;
 trait TaggableTrait
 {
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<array-key, Tag>
      */
     protected Collection $tags;
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<array-key, Tag>
      */
     public function getTags(): Collection
     {

@@ -9,6 +9,8 @@ use App\Factory\EventFactory;
 use App\Enum\ScraperProvider;
 use App\Message\ScrapeItemMessage;
 use App\Repository\EventRepository;
+use App\Service\ArtistExtractor;
+use App\Service\ArtistTagEnricher;
 use App\Service\Scraper\Item\DirtyOldItemScraper;
 use App\Service\Scraper\Item\EventimItemScraper;
 use App\Service\Scraper\Item\HangtimeItemScraper;
@@ -27,7 +29,9 @@ final readonly class ScrapeItemMessageHandler
         private DirtyOldItemScraper $dirtyOldItemScraper,
         private HangtimeItemScraper $hangtimeItemScraper,
         private EventimItemScraper $eventimItemScraper,
+        private ArtistTagEnricher $artistTagEnricher,
         private LoggerInterface $logger,
+        private ArtistExtractor $artistExtractor,
     ) {
     }
 
@@ -57,6 +61,8 @@ final readonly class ScrapeItemMessageHandler
                 $event = $this->eventFactory->createFromDto($dto);
             }
 
+            $this->extractArtistTags($event, $dto->artists);
+
             $this->eventRepository->add($event);
 
             $this->logger->info('Successfully scraped item', [
@@ -71,6 +77,25 @@ final readonly class ScrapeItemMessageHandler
             ]);
 
             throw $e;
+        }
+    }
+
+    private function extractArtistTags(Event $event, array $artistNames = []): void
+    {
+        if (empty($artistNames)) {
+            $artistNames = $this->artistExtractor->extractArtists($event->getName() ?? '');
+            if (empty($artistNames)) {
+                return;
+            }
+        }
+
+        foreach ($artistNames as $artistName) {
+            $artist = $this->artistTagEnricher->enrichArtist($artistName);
+            $event->addArtist($artist);
+
+            foreach ($artist->getTags() as $tag) {
+                $event->addTag($tag);
+            }
         }
     }
 }

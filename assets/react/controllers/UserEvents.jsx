@@ -17,6 +17,7 @@ export default function UserEvents() {
     const [currentPage, setCurrentPage] = useState(null);
     const [totalItems, setTotalItems] = useState(0);
     const [selectedProvider, setSelectedProvider] = useState('');
+    const [selectedTag, setSelectedTag] = useState('');
     const [selectedOrder, setSelectedOrder] = useState('holdingDate:asc');
 
     window.onpopstate = () => {
@@ -29,6 +30,10 @@ export default function UserEvents() {
         let url = `/api/user_events?page=${currentPage}`;
         if (selectedProvider) {
             url += `&event.provider.name=${selectedProvider}`;
+        }
+
+        if (selectedTag) {
+            url += `&event.tags.name=${selectedTag}`;
         }
 
         const [orderField, orderDirection] = selectedOrder.split(':');
@@ -90,6 +95,21 @@ export default function UserEvents() {
         syncUrl(params);
     };
 
+    const handleTagChange = (event) => {
+        const newTag = event.target.value;
+        setSelectedTag(newTag);
+        setCurrentPage(1);
+
+        const params = new URLSearchParams(searchParams);
+        params.set('page', '1');
+        if (newTag) {
+            params.set('tag.name', newTag);
+        } else {
+            params.delete('tag.name');
+        }
+        syncUrl(params);
+    };
+
     const handleOrderChange = (event) => {
         const newOrder = event.target.value;
         setSelectedOrder(newOrder);
@@ -109,11 +129,13 @@ export default function UserEvents() {
     useEffect(() => {
         const pageNumber = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1;
         const providerFromUrl = searchParams.get('provider.name') || '';
+        const tagFromUrl = searchParams.get('tag.name') || '';
         const orderFromUrl = searchParams.get('order') || 'holdingDate:asc';
         
-        if (currentPage === null || currentPage !== pageNumber || selectedProvider !== providerFromUrl || selectedOrder !== orderFromUrl) {
+        if (currentPage === null || currentPage !== pageNumber || selectedProvider !== providerFromUrl || selectedTag !== tagFromUrl || selectedOrder !== orderFromUrl) {
             setCurrentPage(pageNumber);
             setSelectedProvider(providerFromUrl);
+            setSelectedTag(tagFromUrl);
             setSelectedOrder(orderFromUrl);
             return;
         }
@@ -145,9 +167,12 @@ export default function UserEvents() {
                     <EventControls 
                         selectedProvider={selectedProvider}
                         handleProviderChange={handleProviderChange}
+                        selectedTag={selectedTag}
+                        handleTagChange={handleTagChange}
                         selectedOrder={selectedOrder}
                         handleOrderChange={handleOrderChange}
                         totalItems={totalItems}
+                        onlyUserTags={true}
                     />
                 </div>
             </div>
@@ -183,14 +208,15 @@ export default function UserEvents() {
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No events found</h3>
                         <p className="text-gray-500 dark:text-gray-400 max-w-xs text-center">
-                            {selectedProvider || selectedOrder !== 'holdingDate:asc' 
+                            {selectedProvider || selectedTag || selectedOrder !== 'holdingDate:asc' 
                                 ? "Try adjusting your filters to find your events." 
                                 : "You haven't added any events to your collection yet."}
                         </p>
-                        {(selectedProvider || selectedOrder !== 'holdingDate:asc') && (
+                        {(selectedProvider || selectedTag || selectedOrder !== 'holdingDate:asc') && (
                             <button 
                                 onClick={() => {
                                     setSelectedProvider('');
+                                    setSelectedTag('');
                                     setSelectedOrder('holdingDate:asc');
                                     const params = new URLSearchParams();
                                     params.set('page', '1');

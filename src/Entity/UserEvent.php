@@ -26,7 +26,7 @@ use Symfony\Component\Uid\Ulid;
 #[ORM\Entity(repositoryClass: UserEventRepository::class)]
 #[ORM\Table(name: 'user_event')]
 #[ApiFilter(DateFilter::class, properties: ['event.holdingDate', 'customEvent.holdingDate'])]
-#[ApiFilter(SearchFilter::class, properties: ['event.provider.name' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['event.provider.name' => 'exact', 'event.tags.name' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['event.holdingDate', 'customEvent.holdingDate', 'event.name', 'customEvent.name'])]
 #[ApiResource(
     operations: [

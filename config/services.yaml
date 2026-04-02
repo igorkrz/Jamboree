@@ -3,6 +3,7 @@ imports:
 
 parameters:
     locale: 'hr'
+    lastfm_api_key: '%env(LASTFM_API_KEY)%'
 
 when@dev:
     parameters:
@@ -21,6 +22,7 @@ services:
         bind:
             'string $googleClientId': '%google_client_id%'
             'string $googleClientSecret': '%google_client_secret%'
+            'string $lastFmApiKey': '%lastfm_api_key%'
             'string $projectDir': '%kernel.project_dir%'
 
     App\:

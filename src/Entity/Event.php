@@ -12,14 +12,16 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\EventRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table(name: 'event')]
 #[ApiFilter(DateFilter::class, properties: ['holdingDate'])]
-#[ApiFilter(SearchFilter::class, properties: ['provider.name' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: ['provider.name' => 'exact', 'tags.name' => 'partial'])]
 #[ApiFilter(OrderFilter::class, properties: ['holdingDate', 'name'])]
 #[ApiResource(
     operations: [
@@ -46,12 +48,17 @@ class Event extends AbstractEvent
     protected EventProvider $provider;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<array-key, Artist>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'events', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\JoinTable(name: 'event_tag')]
-    #[Groups(['event:read'])]
-    protected Collection $tags;
+    #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'events')]
+    #[ORM\JoinTable(name: 'event_artist')]
+    private Collection $artists;
+
+    public function __construct(?Ulid $id = null)
+    {
+        $this->artists = new ArrayCollection();
+        parent::__construct($id);
+    }
 
     public function getInternalCode(): ?string
     {
@@ -85,6 +92,43 @@ class Event extends AbstractEvent
     public function setProvider(?EventProvider $provider = null): static
     {
         $this->provider = $provider;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<array-key, Artist>
+     */
+    public function getArtists(): Collection
+    {
+        return $this->artists;
+    }
+
+    public function addArtist(Artist $artist): static
+    {
+        if (!$this->hasArtist($artist)) {
+            $this->artists->add($artist);
+        }
+
+        return $this;
+    }
+
+    public function hasArtist(Artist $artist): bool
+    {
+        foreach ($this->artists as $existingArtist) {
+            if ($existingArtist->getObjectIdentifier() === $artist->getObjectIdentifier()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function removeArtist(Artist $artist): static
+    {
+        if ($this->hasArtist($artist)) {
+            $this->artists->removeElement($artist);
+        }
 
         return $this;
     }

@@ -19,6 +19,7 @@ export default function Events() {
     const [currentPage, setCurrentPage] = useState(null);
     const [totalItems, setTotalItems] = useState(0);
     const [selectedProvider, setSelectedProvider] = useState('');
+    const [selectedTag, setSelectedTag] = useState('');
     const [selectedOrder, setSelectedOrder] = useState('holdingDate:asc');
     const { isAuthenticated } = useSelector(
         (state) => state.authentication
@@ -34,6 +35,9 @@ export default function Events() {
         let url = `/api/events?page=${currentPage}&holdingDate[after]=today`;
         if (selectedProvider) {
             url += `&provider.name=${selectedProvider}`;
+        }
+        if (selectedTag) {
+            url += `&tags.name=${selectedTag}`;
         }
 
         const [orderField, orderDirection] = selectedOrder.split(':');
@@ -92,6 +96,21 @@ export default function Events() {
         syncUrl(params);
     };
 
+    const handleTagChange = (event) => {
+        const newTagName = event.target.value;
+        setSelectedTag(newTagName);
+        setCurrentPage(1);
+
+        const params = new URLSearchParams(searchParams);
+        params.set('page', '1');
+        if (newTagName) {
+            params.set('tags.name', newTagName);
+        } else {
+            params.delete('tags.name');
+        }
+        syncUrl(params);
+    };
+
     const handleOrderChange = (event) => {
         const newOrder = event.target.value;
         setSelectedOrder(newOrder);
@@ -111,11 +130,13 @@ export default function Events() {
     useEffect(() => {
         const pageNumber = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1;
         const providerFromUrl = searchParams.get('provider.name') || '';
+        const tagFromUrl = searchParams.get('tags.name') || '';
         const orderFromUrl = searchParams.get('order') || 'holdingDate:asc';
         
-        if (currentPage === null || currentPage !== pageNumber || selectedProvider !== providerFromUrl || selectedOrder !== orderFromUrl) {
+        if (currentPage === null || currentPage !== pageNumber || selectedProvider !== providerFromUrl || selectedTag !== tagFromUrl || selectedOrder !== orderFromUrl) {
             setCurrentPage(pageNumber);
             setSelectedProvider(providerFromUrl);
+            setSelectedTag(tagFromUrl);
             setSelectedOrder(orderFromUrl);
             return;
         }
@@ -159,6 +180,8 @@ export default function Events() {
                     <EventControls 
                         selectedProvider={selectedProvider}
                         handleProviderChange={handleProviderChange}
+                        selectedTag={selectedTag}
+                        handleTagChange={handleTagChange}
                         selectedOrder={selectedOrder}
                         handleOrderChange={handleOrderChange}
                         totalItems={totalItems}
@@ -205,6 +228,7 @@ export default function Events() {
                         <button 
                             onClick={() => {
                                 setSelectedProvider('');
+                                setSelectedTag('');
                                 setSelectedOrder('holdingDate:asc');
                                 const params = new URLSearchParams();
                                 params.set('page', '1');

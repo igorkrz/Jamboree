@@ -30,4 +30,9 @@ class EventDto
      * @var string[]
      */
     public array $tags = [];
+
+    /**
+     * @var string[]
+     */
+    public array $artists = [];
 }
