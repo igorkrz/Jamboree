@@ -6,17 +6,19 @@ namespace App\Service\Scraper\List;
 
 use App\Enum\ScraperProvider;
 use App\Service\Scraper\ListScraperInterface;
+use Exception;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\RedirectionException;
 use Symfony\Component\HttpClient\Exception\ServerException;
 use Symfony\Component\HttpClient\Exception\TransportException;
+use Symfony\Component\Panther\Client;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
 
+use function count;
 use function preg_match;
 
 final class HangtimeListScraper implements ListScraperInterface
@@ -25,23 +27,39 @@ final class HangtimeListScraper implements ListScraperInterface
 
     private const string BASE_API_URL = 'https://api.tootoot.co/api/event/';
 
-    public function __construct(
-        private readonly HttpClientInterface $httpClient,
-    ) {
-    }
-
     /**
      * @return array<string, string[]>
      */
     public function scrape(): array
     {
         try {
-            $response = $this->httpClient->request('GET', self::URL);
+            $client = Client::createChromeClient(arguments: [
+                '--headless',
+                '--disable-gpu',
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+            ]);
+            $client->request('GET', self::URL);
 
-            $htmlContent = $response->getContent();
-            $crawler = new Crawler($htmlContent);
+            $client->waitFor('.tt-evt-li');
 
-            $events = $crawler
+            $lastCount = 0;
+            $currentCount = count($client->getCrawler()->filter('.tt-evt-li'));
+
+            while ($currentCount > $lastCount) {
+                $lastCount = $currentCount;
+
+                $client->executeScript('window.scrollTo(0, document.body.scrollHeight);');
+
+                try {
+                    $client->waitForVisibility('.tt-evt-li:nth-child(' . ($lastCount + 1) . ')', 5);
+                } catch (Exception) {
+                }
+
+                $currentCount = count($client->getCrawler()->filter('.tt-evt-li'));
+            }
+
+            $events = $client->getCrawler()
                 ->filter('.tt-evt-li')
                 ->each(function (Crawler $node) {
                     preg_match(
@@ -60,7 +78,7 @@ final class HangtimeListScraper implements ListScraperInterface
             throw new RedirectionException($e->getResponse());
         } catch (ServerExceptionInterface $e) {
             throw new ServerException($e->getResponse());
-        } catch (TransportExceptionInterface $e) {
+        } catch (Throwable $e) {
             throw new TransportException($e->getMessage());
         }
 
