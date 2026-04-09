@@ -20,6 +20,7 @@ export default function Calendar() {
     const { showFlash } = useFlash();
     const [events, setEvents] = useState([]);
     const [isLoading, setLoading] = useState(true);
+    const [isExporting, setExporting] = useState(false);
     const [currentDate, setCurrentDate] = useState(localStorage.getItem('calendar_date') || new Date().toISOString());
 
     let start = new Date(currentDate);
@@ -61,90 +62,92 @@ export default function Calendar() {
     ];
 
     const handleExport = async (format) => {
-        if (format === 'ics') {
-            try {
-                const response = await useAxios.get('/api/calendar/ics', {
-                    responseType: 'blob'
-                });
+        setExporting(true);
+        try {
+            if (format === 'ics') {
+                try {
+                    const response = await useAxios.get('/api/calendar/ics', {
+                        responseType: 'blob'
+                    });
 
-                const blob = new Blob([response.data], {type: 'text/calendar'});
-                const url = window.URL.createObjectURL(blob);
+                    const blob = new Blob([response.data], {type: 'text/calendar'});
+                    const url = window.URL.createObjectURL(blob);
 
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'jamboree_calendar.ics';
-                document.body.appendChild(link);
-                link.click();
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'jamboree_calendar.ics';
+                    document.body.appendChild(link);
+                    link.click();
 
-                link.remove();
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error(error);
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
+                } catch (error) {
+                    console.error(error);
 
-                let message = 'Download failed';
+                    let message = 'Download failed';
 
-                if (error.response?.data instanceof Blob) {
-                    try {
-                        const text = await error.response.data.text();
-
+                    if (error.response?.data instanceof Blob) {
                         try {
-                            const json = JSON.parse(text);
-                            message = json.message || json.error || message;
+                            const text = await error.response.data.text();
+
+                            try {
+                                const json = JSON.parse(text);
+                                message = json.message || json.error || message;
+                            } catch {
+                                message = text;
+                            }
+
                         } catch {
-                            message = text;
+                            message = 'Unable to read error response';
                         }
-
-                    } catch {
-                        message = 'Unable to read error response';
                     }
+                    showFlash(message, 'error');
                 }
-                showFlash(message, 'error');
-                return;
-            }
-        }
-
-        if (format === 'google') {
-            try {
-                const response = await useAxios.post(
-                    '/api/calendar/google',
-                    {'summary': 'Jamboree'},
-                    {'headers': {'Content-Type': 'application/json'}}
-                );
-
-                showFlash(response.data.message ?? 'Google Calendar created successfully.', 'success');
-            } catch (error) {
-                showFlash(error.response?.data?.message ?? 'Failed to create Google Calendar.', 'error');
             }
 
-            return;
-        }
+            if (format === 'google') {
+                try {
+                    const response = await useAxios.post(
+                        '/api/calendar/google',
+                        {'summary': 'Jamboree'},
+                        {'headers': {'Content-Type': 'application/json'}}
+                    );
 
-        if (format === 'google_sync') {
-            try {
-                const response = await useAxios.post(
-                    '/api/calendar/google/sync',
-                    {},
-                    {'headers': {'Content-Type': 'application/json'}}
-                );
-
-                showFlash(response.data.message ?? 'Google Calendar synced successfully.', 'success');
-            } catch (error) {
-                showFlash(error.response?.data?.message ?? 'Failed to sync Google Calendar.', 'error');
+                    showFlash(response.data.message ?? 'Google Calendar created successfully.', 'success');
+                } catch (error) {
+                    showFlash(error.response?.data?.message ?? 'Failed to create Google Calendar.', 'error');
+                }
             }
-        }
 
-        if (format === 'google_delete') {
-            try {
-                const response = await useAxios.delete(
-                    '/api/calendar/google',
-                    {},
-                    {'headers': {'Content-Type': 'application/json'}}
-                );
+            if (format === 'google_sync') {
+                try {
+                    const response = await useAxios.post(
+                        '/api/calendar/google/sync',
+                        {},
+                        {'headers': {'Content-Type': 'application/json'}}
+                    );
 
-                showFlash(response.data.message ?? 'Google Calendar deleted successfully.', 'success');
-            } catch (error) {
-                showFlash(error.response?.data?.message ?? 'Failed to delete Google Calendar.', 'error');
+                    showFlash(response.data.message ?? 'Google Calendar synced successfully.', 'success');
+                } catch (error) {
+                    showFlash(error.response?.data?.message ?? 'Failed to sync Google Calendar.', 'error');
+                }
             }
+
+            if (format === 'google_delete') {
+                try {
+                    const response = await useAxios.delete(
+                        '/api/calendar/google',
+                        {},
+                        {'headers': {'Content-Type': 'application/json'}}
+                    );
+
+                    showFlash(response.data.message ?? 'Google Calendar deleted successfully.', 'success');
+                } catch (error) {
+                    showFlash(error.response?.data?.message ?? 'Failed to delete Google Calendar.', 'error');
+                }
+            }
+        } finally {
+            setExporting(false);
         }
     };
 
@@ -176,9 +179,16 @@ export default function Calendar() {
                 <div className="flex items-center gap-3">
                     {isLoggedIn && (
                         <Menu as="div" className="relative">
-                            <MenuButton className="inline-flex items-center gap-x-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-indigo-500 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
-                                <ArrowDownTrayIcon className="h-5 w-5" />
-                                Export Events
+                            <MenuButton 
+                                disabled={isExporting}
+                                className={`inline-flex items-center gap-x-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-indigo-500 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 ${isExporting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            >
+                                {isExporting ? (
+                                    <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                    <ArrowDownTrayIcon className="h-5 w-5" />
+                                )}
+                                {isExporting ? 'Exporting...' : 'Export Events'}
                                 <ChevronDownIcon className="h-4 w-4 opacity-70" />
                             </MenuButton>
 

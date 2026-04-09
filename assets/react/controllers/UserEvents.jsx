@@ -3,11 +3,10 @@ import Event from "../components/Event.jsx";
 import useAxios from "../helpers/useAxios.jsx";
 import Pagination from "../components/Pagination.jsx";
 import EventControls from "../components/EventControls.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { FunnelIcon } from "@heroicons/react/24/outline/index.js";
 
 export default function UserEvents() {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [events, setEvents] = useState([]);
     const [isLoading, setLoading] = useState(true);
@@ -20,9 +19,6 @@ export default function UserEvents() {
     const [selectedTag, setSelectedTag] = useState('');
     const [selectedOrder, setSelectedOrder] = useState('holdingDate:asc');
 
-    window.onpopstate = () => {
-        navigate(-1);
-    }
 
     const getUserEvents = () => {
         setLoading(true);
@@ -123,7 +119,6 @@ export default function UserEvents() {
 
     const syncUrl = (params) => {
         setSearchParams(params);
-        navigate(`/user_events?${params.toString()}`);
     };
 
     useEffect(() => {
@@ -180,7 +175,7 @@ export default function UserEvents() {
             <div className="container mx-auto px-4 py-12">
                 {events.length > 0 ? (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             {events.map((event) => (
                                 <Event
                                     key={event.id}

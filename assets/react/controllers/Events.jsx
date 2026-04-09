@@ -4,11 +4,10 @@ import Pagination from "../components/Pagination.jsx";
 import EventControls from "../components/EventControls.jsx";
 import useAxios from "../helpers/useAxios.jsx";
 import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { FunnelIcon } from "@heroicons/react/24/outline/index.js";
 
 export default function Events() {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [events, setEvents] = useState([]);
     const [userEvents, setUserEvents] = useState([]);
@@ -25,9 +24,6 @@ export default function Events() {
         (state) => state.authentication
     );
 
-    window.onpopstate = () => {
-        navigate(-1);
-    }
 
     const getEvents = () => {
         setLoading(true);
@@ -124,7 +120,6 @@ export default function Events() {
 
     const syncUrl = (params) => {
         setSearchParams(params);
-        navigate(`/events?${params.toString()}`);
     };
 
     useEffect(() => {
@@ -192,7 +187,7 @@ export default function Events() {
             <div className="container mx-auto px-4 py-12">
                 {events.length > 0 ? (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             {events.map((event) => {
                                 const userEvent = userEvents.find(ue => ue.event && ue.event.id === event.id);
                                 return (

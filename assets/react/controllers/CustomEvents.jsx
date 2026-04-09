@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import Event from "../components/Event.jsx";
 import useAxios from "../helpers/useAxios.jsx";
 import Pagination from "../components/Pagination.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export default function CustomEvents() {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [events, setEvents] = useState([]);
     const [userEvents, setUserEvents] = useState([]);
@@ -16,9 +15,6 @@ export default function CustomEvents() {
     const [currentPage, setCurrentPage] = useState(null);
     const [totalItems, setTotalItems] = useState(0);
 
-    window.onpopstate = () => {
-        navigate(-1);
-    }
 
     const getCustomEvents = () => {
         setLoading(true);
@@ -50,15 +46,14 @@ export default function CustomEvents() {
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
-        navigate(`/custom_events?page=${newPage}`);
+        setSearchParams({ page: newPage });
     };
 
     useEffect(() => {
-        if (currentPage === null) {
-            const pageNumber = searchParams.get('page') ? searchParams.get('page') : 1;
-            const navigationPage = currentPage ? currentPage : pageNumber;
-            navigate(`/custom_events?page=${navigationPage}`);
-            setCurrentPage(navigationPage);
+        const pageNumber = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1;
+        
+        if (currentPage === null || currentPage !== pageNumber) {
+            setCurrentPage(pageNumber);
             return;
         }
 
@@ -74,7 +69,7 @@ export default function CustomEvents() {
             .catch(error => {
                 console.error(error);
             });
-    }, [currentPage]);
+    }, [currentPage, searchParams]);
 
     if (isLoading) {
         return (<h1>Loading screen</h1>)
