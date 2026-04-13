@@ -52,6 +52,7 @@ class Event extends AbstractEvent
      */
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'events')]
     #[ORM\JoinTable(name: 'event_artist')]
+    #[Groups(['event:read'])]
     private Collection $artists;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]

@@ -9,7 +9,8 @@ import {
     ArrowLeftIcon,
     InformationCircleIcon,
     TagIcon,
-    ClockIcon
+    ClockIcon,
+    UserCircleIcon
 } from "@heroicons/react/24/outline";
 
 export default function SingleEvent() {
@@ -128,6 +129,34 @@ export default function SingleEvent() {
                             )}
                         </section>
 
+                        {event.artists && event.artists.length > 0 && (
+                            <section className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+                                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center">
+                                    <UserCircleIcon className="h-6 w-6 mr-3 text-indigo-600 dark:text-indigo-400" />
+                                    Artists
+                                </h2>
+                                <div className="grid grid-cols-1 gap-6">
+                                    {event.artists.map(artist => (
+                                        <div key={artist.id} className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700">
+                                            <div className="flex items-center mb-4">
+                                                <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mr-4">
+                                                    <UserCircleIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                                                </div>
+                                                <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{artist.name}</span>
+                                            </div>
+                                            {artist.bio && (
+                                                <div className="text-gray-600 dark:text-gray-400 prose dark:prose-invert max-w-none text-sm leading-relaxed" 
+                                                     dangerouslySetInnerHTML={{ __html: artist.summary.replace(/<a\s+href="([^"]+)">([^<]+)<\/a>/g, (match, p1, p2) => {
+                                                         return `<a href="${p1}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">${p2}</a>`;
+                                                     }) }} 
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
                         {event.location?.venue && (
                             <section className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
                                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center">
@@ -140,7 +169,7 @@ export default function SingleEvent() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{event.location.venue}</h3>
-                                        <p className="text-gray-500 dark:text-gray-400">{event.location.city}, {event.location.country || 'Slovenia'}</p>
+                                        <p className="text-gray-500 dark:text-gray-400">{event.location.city}, {event.location.country || 'Croatia'}</p>
                                     </div>
                                 </div>
                             </section>

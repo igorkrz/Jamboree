@@ -20,19 +20,17 @@ final readonly class ArtistTagEnricher
 
     public function enrichArtist(string $artistName): Artist
     {
-        $artist = $this->artistRepository->findOneBy(['name' => $artistName]);
-
-        if ($artist instanceof Artist) {
-            $this->logger->info('Found artist in database', ['name' => $artistName]);
-
+        $name = strtoupper($artistName);
+        $artist = $this->getOrCreateArtist($name);
+        if (is_string($artist->getBio())) {
             return $artist;
         }
 
-        $this->logger->info('Artist not found in database, querying Last.fm', ['name' => $artistName]);
-        $genres = $this->lastFmService->getArtistGenres($artistName);
+        $artistInfo = $this->lastFmService->getArtistInfo($name);
+        $genres = $artistInfo->genres;
 
-        $artist = new Artist();
-        $artist->setName($artistName);
+        $artist->setSummary($artistInfo->summary);
+        $artist->setBio($artistInfo->bio);
 
         if (empty($genres)) {
             $this->logger->warning('No genres found for artist', ['name' => $artistName]);
@@ -49,6 +47,22 @@ final readonly class ArtistTagEnricher
         }
 
         $this->artistRepository->add($artist);
+
+        return $artist;
+    }
+
+    private function getOrCreateArtist(string $artistName): Artist
+    {
+        $artist = $this->artistRepository->findOneBy(['name' => $artistName]);
+
+        if ($artist instanceof Artist) {
+            $this->logger->info('Found artist in database', ['name' => $artistName]);
+
+            return $artist;
+        }
+
+        $artist = new Artist();
+        $artist->setName($artistName);
 
         return $artist;
     }

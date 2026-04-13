@@ -102,8 +102,8 @@ final readonly class ScrapeItemMessageHandler
     private function extractArtistTags(Event $event, array $artists = []): void
     {
         foreach ($artists as $artistDto) {
-            $artistName = is_string($artistDto) ? $artistDto : $artistDto->name;
-            if ($artistName === null) {
+            $artistName = $artistDto->name;
+            if (!is_string($artistName)) {
                 continue;
             }
 

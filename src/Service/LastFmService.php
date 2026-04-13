@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Dto\ArtistInfoDto;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Throwable;
 
+use function count;
 use function in_array;
 use function strtolower;
+use function trim;
 
 final readonly class LastFmService
 {
@@ -36,15 +39,12 @@ final readonly class LastFmService
     ) {
     }
 
-    /**
-     * @return string[]
-     */
-    public function getArtistGenres(string $artistName): array
+    public function getArtistInfo(string $artistName): ArtistInfoDto
     {
         if ($this->lastFmApiKey === '') {
-            $this->logger->warning('Last.fm API key is missing. Skipping genre enrichment.');
+            $this->logger->warning('Last.fm API key is missing. Skipping artist info enrichment.');
 
-            return [];
+            return new ArtistInfoDto();
         }
 
         try {
@@ -60,6 +60,8 @@ final readonly class LastFmService
 
             $data = $response->toArray();
             $tags = $data['artist']['tags']['tag'] ?? [];
+            $summary = $data['artist']['bio']['summary'] ?? null;
+            $bio = $data['artist']['bio']['content'] ?? null;
 
             $genres = [];
             foreach ($tags as $tag) {
@@ -75,19 +77,24 @@ final readonly class LastFmService
                 }
             }
 
-            $this->logger->info('Last.fm artist genres found', [
+            $this->logger->info('Last.fm artist info found', [
                 'artist' => $artistName,
                 'genres' => $genres,
+                'has_bio' => $bio !== null,
             ]);
 
-            return $genres;
+            return new ArtistInfoDto(
+                genres: $genres,
+                summary: $summary,
+                bio: $bio,
+            );
         } catch (Throwable $e) {
-            $this->logger->error('Failed to fetch genres from Last.fm', [
+            $this->logger->error('Failed to fetch info from Last.fm', [
                 'artist' => $artistName,
                 'error' => $e->getMessage(),
             ]);
 
-            return [];
+            return new ArtistInfoDto();
         }
     }
 }

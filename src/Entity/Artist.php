@@ -14,6 +14,7 @@ use App\Repository\ArtistRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: ArtistRepository::class)]
@@ -30,7 +31,16 @@ class Artist implements ResourceInterface, TimestampableInterface, TaggableInter
     protected Ulid $id;
 
     #[ORM\Column(type: 'string', unique: true)]
+    #[Groups(['event:read'])]
     protected string $name;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['event:read'])]
+    protected ?string $summary = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['event:read'])]
+    protected ?string $bio = null;
 
     /**
      * @var Collection<array-key, Event>
@@ -57,6 +67,30 @@ class Artist implements ResourceInterface, TimestampableInterface, TaggableInter
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSummary(): ?string
+    {
+        return $this->summary;
+    }
+
+    public function setSummary(?string $summary): static
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
 
         return $this;
     }
