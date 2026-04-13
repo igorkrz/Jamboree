@@ -28,7 +28,18 @@ use Symfony\Component\HttpFoundation\File\File;
 
 final class EventConfigurator implements AutoMapperConfiguratorInterface
 {
-    private const GOOGLE_BUCKET_URL = 'https://storage.googleapis.com/jamboree-eu';
+    private const string GOOGLE_BUCKET_URL = 'https://storage.googleapis.com/jamboree-eu';
+
+    /** @var string[] */
+    private const array FORMATS = [
+        'Y-m-d',
+        'd.m.',
+        'd.m.Y.',
+        'd.m.Y',
+        'd.m.y.',
+        'd.m.y',
+        'd/m/Y',
+    ];
 
     public function __construct(
         private readonly EventFactory $eventFactory,
@@ -40,14 +51,6 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
     ) {
     }
 
-    private const FORMATS = [
-        'd.m.',
-        'd.m.Y.',
-        'd.m.Y',
-        'd.m.y.',
-        'd.m.y',
-        'd/m/Y',
-    ];
     public function configure(AutoMapperConfigInterface $config): void
     {
         $mapping = $config->registerMapping(EventDto::class, Event::class);
@@ -69,6 +72,7 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
         $mapping->forMember('price', fn (EventDto $dto): ?string => $dto->price);
         $mapping->forMember('url', fn (EventDto $dto): ?string => $dto->url);
         $mapping->forMember('imageUrl', fn (EventDto $dto): ?string => $dto->imageUrl);
+        $mapping->forMember('isAiEnriched', fn (EventDto $dto): bool => $dto->isAiEnriched);
         $mapping->forMember('picture', function (EventDto $dto, AutoMapperInterface $mapper, array $context): ?EventMediaObject {
             if ($dto->imageUrl === null) {
                 return null;
@@ -95,14 +99,15 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
             return $picture;
         });
         $mapping->forMember('provider', function (EventDto $dto): EventProvider {
-            $provider = $this->eventProviderRepository->findOneBy(['name' => $dto->provider]);
+            $providerName = $dto->provider ?? 'Unknown';
+            $provider = $this->eventProviderRepository->findOneBy(['name' => $providerName]);
 
             if ($provider instanceof EventProvider) {
                 return $provider;
             }
 
             $provider = new EventProvider();
-            return $provider->setName($dto->provider);
+            return $provider->setName($providerName);
         });
         $mapping->forMember('location', function (EventDto $dto, AutoMapperInterface $mapper): ?Location {
             /** @var Location $location */
@@ -114,7 +119,7 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
 
             return $location;
         });
-        $mapping->forMember('holdingDate', function (EventDto $dto): ?\DateTimeInterface {
+        $mapping->forMember('holdingDate', function (EventDto $dto): ?DateTimeInterface {
             if ($dto->holdingDate === null) {
                 return null;
             }

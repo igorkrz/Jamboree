@@ -1,0 +1,14 @@
+ai:
+    platform:
+        deepseek:
+            api_key: '%env(DEEPSEEK_API_KEY)%'
+        cache:
+            deepseek:
+                platform: 'ai.platform.deepseek'
+                service: 'ai_cache_pool'
+                ttl: 36000
+    agent:
+        default:
+            platform: 'ai.platform.cache.deepseek'
+            model: 'deepseek-chat'
+            tools: false

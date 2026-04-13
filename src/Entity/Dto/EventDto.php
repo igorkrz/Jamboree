@@ -6,6 +6,9 @@ namespace App\Entity\Dto;
 
 use DateTimeInterface;
 
+use function implode;
+use function sprintf;
+
 class EventDto
 {
     public ?string $internalCode = null;
@@ -32,7 +35,21 @@ class EventDto
     public array $tags = [];
 
     /**
-     * @var string[]
+     * @var ArtistDto[]
      */
     public array $artists = [];
+
+    public bool $isAiEnriched = false;
+
+    public function __toString(): string
+    {
+        return sprintf(
+            "Event Name: %s\nDescription: %s\nLocation: %s\nDate: %s\nArtists: %s",
+            $this->name ?? 'Unknown',
+            $this->description ?? 'No description',
+            $this->location,
+            $this->holdingDate instanceof DateTimeInterface ? $this->holdingDate->format('Y-m-d') : $this->holdingDate,
+            implode(', ', $this->artists),
+        );
+    }
 }

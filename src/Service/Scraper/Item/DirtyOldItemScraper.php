@@ -8,7 +8,6 @@ use App\Entity\Dto\EventDto;
 use App\Enum\ScraperProvider;
 use App\Factory\EventFactory;
 use App\Factory\LocationFactory;
-use App\Service\ArtistExtractor;
 use App\Service\Scraper\ItemScraperInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -38,7 +37,6 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
         private EventFactory $eventFactory,
         private LocationFactory $locationFactory,
         private LoggerInterface $logger,
-        private ArtistExtractor $artistExtractor,
     ) {
     }
 
@@ -125,8 +123,7 @@ final readonly class DirtyOldItemScraper implements ItemScraperInterface
 
         $event['url'] = $url;
         $event['imageUrl'] = $image;
-
-        $event['artists'] = $this->artistExtractor->extractArtists($event['name']);
+        $event['artists'] = [];
 
         $locationDto = $this->locationFactory->createDtoFromArray($locationResolver->resolve($location));
         $event['location'] = $locationDto;

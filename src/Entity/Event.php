@@ -54,10 +54,25 @@ class Event extends AbstractEvent
     #[ORM\JoinTable(name: 'event_artist')]
     private Collection $artists;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isAiEnriched = false;
+
     public function __construct(?Ulid $id = null)
     {
         $this->artists = new ArrayCollection();
         parent::__construct($id);
+    }
+
+    public function isAiEnriched(): bool
+    {
+        return $this->isAiEnriched;
+    }
+
+    public function setIsAiEnriched(bool $isAiEnriched): static
+    {
+        $this->isAiEnriched = $isAiEnriched;
+
+        return $this;
     }
 
     public function getInternalCode(): ?string

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Entity\Dto\ArtistDto;
+use App\Entity\Dto\EventDto;
 use App\Entity\Event;
 use App\Factory\EventFactory;
 use App\Enum\ScraperProvider;
 use App\Message\ScrapeItemMessage;
 use App\Repository\EventRepository;
-use App\Service\ArtistExtractor;
+use App\Service\AiEventParser;
 use App\Service\ArtistTagEnricher;
 use App\Service\Scraper\Item\DirtyOldItemScraper;
 use App\Service\Scraper\Item\EventimItemScraper;
@@ -19,6 +21,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Throwable;
 
 use function gethostname;
+use function is_string;
 
 #[AsMessageHandler]
 final readonly class ScrapeItemMessageHandler
@@ -31,7 +34,7 @@ final readonly class ScrapeItemMessageHandler
         private EventimItemScraper $eventimItemScraper,
         private ArtistTagEnricher $artistTagEnricher,
         private LoggerInterface $logger,
-        private ArtistExtractor $artistExtractor,
+        private AiEventParser $aiEventParser,
     ) {
     }
 
@@ -51,15 +54,19 @@ final readonly class ScrapeItemMessageHandler
             };
 
             $dto = $scraper->scrape($message->url);
-
-            /** @var ?Event $event */
             $event = $this->eventRepository->findOneBy(['internalCode' => $dto->internalCode]);
+            if ($event instanceof Event && $event->isAiEnriched()) {
+                $this->logger->info('Event already enriched with AI, skipping update', [
+                    'internalCode' => $event->getInternalCode(),
+                    'url' => $event->getUrl(),
+                ]);
 
-            if ($event instanceof Event) {
-                $event = $this->eventFactory->mapToExistingObject($dto, $event);
-            } else {
-                $event = $this->eventFactory->createFromDto($dto);
+                return;
             }
+
+            $dto = $this->aiEventParser->parse($dto);
+
+            $event = $this->createOrUpdateEvent($dto, $event);
 
             $this->extractArtistTags($event, $dto->artists);
 
@@ -80,16 +87,26 @@ final readonly class ScrapeItemMessageHandler
         }
     }
 
-    private function extractArtistTags(Event $event, array $artistNames = []): void
+    private function createOrUpdateEvent(EventDto $dto, ?Event $event = null): Event
     {
-        if (empty($artistNames)) {
-            $artistNames = $this->artistExtractor->extractArtists($event->getName() ?? '');
-            if (empty($artistNames)) {
-                return;
-            }
+        if ($event instanceof Event) {
+            return $this->eventFactory->mapToExistingObject($dto, $event);
         }
 
-        foreach ($artistNames as $artistName) {
+        return $this->eventFactory->createFromDto($dto);
+    }
+
+    /**
+     * @param ArtistDto[] $artists
+     */
+    private function extractArtistTags(Event $event, array $artists = []): void
+    {
+        foreach ($artists as $artistDto) {
+            $artistName = is_string($artistDto) ? $artistDto : $artistDto->name;
+            if ($artistName === null) {
+                continue;
+            }
+
             $artist = $this->artistTagEnricher->enrichArtist($artistName);
             $event->addArtist($artist);
 

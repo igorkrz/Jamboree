@@ -8,7 +8,6 @@ use App\Entity\Dto\EventDto;
 use App\Enum\ScraperProvider;
 use App\Factory\EventFactory;
 use App\Factory\LocationFactory;
-use App\Service\ArtistExtractor;
 use App\Service\Scraper\ItemScraperInterface;
 use DateTime;
 use ReflectionException;
@@ -33,7 +32,6 @@ final readonly class HangtimeItemScraper implements ItemScraperInterface
         private HttpClientInterface $httpClient,
         private EventFactory $eventFactory,
         private LocationFactory $locationFactory,
-        private ArtistExtractor $artistExtractor,
     ) {
     }
 
@@ -95,7 +93,7 @@ final readonly class HangtimeItemScraper implements ItemScraperInterface
             'url' => self::BASE_EVENT_URL . $response['_id'],
             'imageUrl' => self::BASE_IMAGE_URL . $response['_id'] . '/' . $response['ShareImage'] . '.jpg',
             'tags' => $response['Keywords'],
-            'artists' => $this->artistExtractor->extractArtists($response['ProfileName']),
+            'artists' => [],
         ];
 
         $locationDto = $this->locationFactory->createDtoFromArray($locationResolver->resolve($location));
