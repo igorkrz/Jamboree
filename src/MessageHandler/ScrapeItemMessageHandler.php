@@ -10,6 +10,7 @@ use App\Entity\Event;
 use App\Factory\EventFactory;
 use App\Enum\ScraperProvider;
 use App\Message\ScrapeItemMessage;
+use App\Message\NewEventImportedMessage;
 use App\Repository\EventRepository;
 use App\Service\AiEventParser;
 use App\Service\ArtistTagEnricher;
@@ -18,6 +19,7 @@ use App\Service\Scraper\Item\EventimItemScraper;
 use App\Service\Scraper\Item\HangtimeItemScraper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
 use function gethostname;
@@ -35,6 +37,7 @@ final readonly class ScrapeItemMessageHandler
         private ArtistTagEnricher $artistTagEnricher,
         private LoggerInterface $logger,
         private AiEventParser $aiEventParser,
+        private MessageBusInterface $messageBus,
     ) {
     }
 
@@ -55,6 +58,7 @@ final readonly class ScrapeItemMessageHandler
 
             $dto = $scraper->scrape($message->url);
             $event = $this->eventRepository->findOneBy(['internalCode' => $dto->internalCode]);
+            $isNew = $event === null;
             if ($event instanceof Event && $event->isAiEnriched()) {
                 $this->logger->info('Event already enriched with AI, skipping update', [
                     'internalCode' => $event->getInternalCode(),
@@ -71,6 +75,10 @@ final readonly class ScrapeItemMessageHandler
             $this->extractArtistTags($event, $dto->artists);
 
             $this->eventRepository->add($event);
+
+            if ($isNew) {
+                $this->messageBus->dispatch(new NewEventImportedMessage($event->getId()));
+            }
 
             $this->logger->info('Successfully scraped item', [
                 'internalCode' => $dto->internalCode,

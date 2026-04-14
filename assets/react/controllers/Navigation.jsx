@@ -2,6 +2,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react
 import { Bars3Icon, XMarkIcon, CalendarIcon, TicketIcon, PlusIcon, Squares2X2Icon, HeartIcon, SparklesIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline"
 import { Link, useLocation } from "react-router-dom";
 import UserMenu from "./UserMenu.jsx"
+import NotificationBell from "./NotificationBell.jsx"
 import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 
@@ -107,7 +108,10 @@ export default function Navigation() {
                         </button>
                         {isLoginChecked && (
                             isAuthenticated ? (
-                                <UserMenu />
+                                <>
+                                    <NotificationBell />
+                                    <UserMenu />
+                                </>
                             ) : (
                                 <Link
                                     className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all active:scale-95"

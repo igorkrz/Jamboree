@@ -19,7 +19,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class DirtyOldListScraper implements ListScraperInterface
 {
-    private const string URL = 'https://www.dirtyoldempire.com/en/product-category/karte-en/' ;
+    private const string URL = 'https://www.dirtyoldempire.com/kategorija-proizvoda/karte/';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,

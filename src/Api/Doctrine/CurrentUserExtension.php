@@ -9,6 +9,7 @@ use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use App\Entity\CustomEvent;
+use App\Entity\Notification;
 use App\Entity\User;
 use App\Entity\UserEvent;
 use Doctrine\ORM\QueryBuilder;
@@ -35,7 +36,7 @@ final readonly class CurrentUserExtension implements QueryCollectionExtensionInt
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
-        if (UserEvent::class !== $resourceClass && CustomEvent::class !== $resourceClass) {
+        if (UserEvent::class !== $resourceClass && CustomEvent::class !== $resourceClass && Notification::class !== $resourceClass) {
             return;
         }
 
