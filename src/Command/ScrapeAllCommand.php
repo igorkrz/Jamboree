@@ -37,7 +37,7 @@ final class ScrapeAllCommand extends Command
     {
         foreach ($this->scrapers as $scraper) {
             $this->logger->info(sprintf('Running scraper for provider: %s', $scraper->getProvider()->value));
-            
+
             try {
                 $scrapedList = $scraper->scrape();
                 foreach ($scrapedList as $scrapedItem) {

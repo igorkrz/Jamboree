@@ -14,6 +14,7 @@ use App\Message\NewEventImportedMessage;
 use App\Repository\EventRepository;
 use App\Service\AiEventParser;
 use App\Service\ArtistTagEnricher;
+use App\Service\Scraper\Item\CinestarItemScraper;
 use App\Service\Scraper\Item\DirtyOldItemScraper;
 use App\Service\Scraper\Item\EventimItemScraper;
 use App\Service\Scraper\Item\HangtimeItemScraper;
@@ -34,6 +35,7 @@ final readonly class ScrapeItemMessageHandler
         private DirtyOldItemScraper $dirtyOldItemScraper,
         private HangtimeItemScraper $hangtimeItemScraper,
         private EventimItemScraper $eventimItemScraper,
+        private CinestarItemScraper $cinestarItemScraper,
         private ArtistTagEnricher $artistTagEnricher,
         private LoggerInterface $logger,
         private AiEventParser $aiEventParser,
@@ -54,6 +56,7 @@ final readonly class ScrapeItemMessageHandler
                 ScraperProvider::DIRTY_OLD_SHOP => $this->dirtyOldItemScraper,
                 ScraperProvider::HANGTIME_AGENCY => $this->hangtimeItemScraper,
                 ScraperProvider::EVENTIM => $this->eventimItemScraper,
+                ScraperProvider::CINESTAR => $this->cinestarItemScraper,
             };
 
             $dto = $scraper->scrape($message->url);
@@ -68,7 +71,9 @@ final readonly class ScrapeItemMessageHandler
                 return;
             }
 
-            $dto = $this->aiEventParser->parse($dto);
+            if ($dto->provider !== ScraperProvider::CINESTAR->value) {
+                $dto = $this->aiEventParser->parse($dto);
+            }
 
             $event = $this->createOrUpdateEvent($dto, $event);
 

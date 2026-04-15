@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Enum\ScraperProvider;
 use App\Message\ScrapeItemMessage;
-use App\Service\Scraper\List\HangtimeListScraper;
+use App\Service\Scraper\List\CinestarListScraper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -17,11 +16,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use function count;
 use function sprintf;
 
-#[AsCommand(name: 'app:scrape:hangtime-agency', description: 'Scrape hangtime agency for events')]
-final class ScrapeHangtimeCommand extends Command
+#[AsCommand(name: 'app:scrape:cinestar', description: 'Scrape cinestar for anime movies')]
+final class ScrapeCinestarCommand extends Command
 {
     public function __construct(
-        private readonly HangtimeListScraper $listScraper,
+        private readonly CinestarListScraper $listScraper,
         private readonly MessageBusInterface $messageBus,
         private readonly LoggerInterface $logger,
         ?string $name = null,
@@ -36,7 +35,7 @@ final class ScrapeHangtimeCommand extends Command
         foreach ($scrapedList as $scrapedItem) {
             $this->messageBus->dispatch(new ScrapeItemMessage(
                 url: $scrapedItem['url'],
-                provider: ScraperProvider::HANGTIME_AGENCY,
+                provider: $this->listScraper->getProvider(),
             ));
         }
 

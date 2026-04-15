@@ -9,4 +9,5 @@ enum ScraperProvider: string
     case DIRTY_OLD_SHOP = 'dirty_old_shop';
     case HANGTIME_AGENCY= 'hangtime_agency';
     case EVENTIM = 'eventim';
+    case CINESTAR = 'cinestar';
 }
