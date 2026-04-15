@@ -23,7 +23,7 @@ final class EventimListScraper implements ListScraperInterface
     public function scrape(): array
     {
         try {
-            $response = $this->httpClient->request('GET', self::BASE_API_URL, [
+            $responseHr = $this->httpClient->request('GET', self::BASE_API_URL, [
                 'query' => [
                     'webId' => 'web__eventim-hrv',
                     'language' => 'hr',
@@ -35,8 +35,22 @@ final class EventimListScraper implements ListScraperInterface
                 ]
             ]);
 
-            $productGroups = $response->toArray()['productGroups'] ?? [];
+            $responseSi = $this->httpClient->request('GET', self::BASE_API_URL, [
+                'query' => [
+                    'webId' => 'web__eventim-svn',
+                    'language' => 'en',
+                    'retail_partner' => 'SIB',
+                    'categories' => 'Music|Metal',
+                    'sort' => 'Recommendation',
+                    'in_stock' => 'true',
+                    'tags' => 'DISABLE_FBS',
+                ]
+            ]);
 
+            $productGroupsHr = $responseHr->toArray()['productGroups'] ?? [];
+            $productGroupsSi = $responseSi->toArray()['productGroups'] ?? [];
+
+            $productGroups = array_merge($productGroupsHr, $productGroupsSi);
             if (empty($productGroups)) {
                 return [];
             }
