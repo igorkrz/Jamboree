@@ -82,18 +82,6 @@ export default function Event({ event, isFavorite, isAuthenticated = true, userE
                         <HeartIcon className="w-6 h-6" />
                     )}
                 </button>
-
-                <div className="absolute bottom-4 left-4 flex flex-wrap gap-1.5 max-w-[80%]">
-                    {event.tags && event.tags.map((tag) => (
-                        <span
-                            key={tag.id}
-                            className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg text-white shadow-sm"
-                            style={{ backgroundColor: tag.color || '#3b82f6' }}
-                        >
-                            {tag.name}
-                        </span>
-                    ))}
-                </div>
             </div>
 
             <div className="flex flex-col flex-1 p-5">

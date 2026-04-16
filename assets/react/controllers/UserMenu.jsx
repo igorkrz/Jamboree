@@ -24,8 +24,8 @@ export default function UserMenu() {
                         src={user?.picture || "https://images.unsplash.com/vector-1738312097380-45562da00459?q=80&w=1760&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
                         className="h-8 w-8 rounded-full object-cover ring-2 ring-white"
                     />
-                    <div className="hidden md:flex flex-col items-start leading-tight">
-                        <span className="text-xs font-semibold text-gray-900 dark:text-gray-100">{user?.email || 'User'}</span>
+                    <div className="hidden md:flex flex-col items-start leading-tight max-w-[120px]">
+                        <span className="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate w-full text-left">{user?.email || 'User'}</span>
                         <span className="text-[10px] text-gray-500 dark:text-gray-400">Account</span>
                     </div>
                     <ChevronDownIcon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" />

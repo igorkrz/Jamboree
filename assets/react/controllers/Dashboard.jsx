@@ -1,10 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
-    TicketIcon, 
-    HeartIcon, 
-    SparklesIcon, 
-    CalendarIcon,
+    TicketIcon,
+    HeartIcon,
+    SparklesIcon,
     ArrowRightIcon,
     ChartBarIcon
 } from "@heroicons/react/24/outline";
@@ -12,6 +11,26 @@ import { useSelector } from "react-redux";
 
 export default function Dashboard() {
     const { isAuthenticated, user } = useSelector((state) => state.authentication);
+    const [isDark, setIsDark] = React.useState(
+        document.documentElement.classList.contains('dark')
+    );
+
+    React.useEffect(() => {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    setIsDark(document.documentElement.classList.contains('dark'));
+                }
+            });
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+
+        return () => observer.disconnect();
+    }, []);
 
     const quickActions = [
         { 
@@ -42,10 +61,10 @@ export default function Dashboard() {
             <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-indigo-600 px-6 py-12 sm:px-12 sm:py-20 shadow-2xl mb-12">
                 <div className="relative z-10 max-w-2xl text-left">
                     <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-6xl mb-6">
-                        Welcome back, {user?.firstName || 'Explorer'}!
+                        Welcome to Jamboree {user?.firstName || ''}!
                     </h1>
                     <p className="text-base sm:text-lg text-indigo-100 mb-8 leading-relaxed">
-                        Discover the most exciting events happening around you. From concerts to workshops, find your next adventure with Jamboree.
+                        Discover metal events and anime movies in one place, save the ones you like, and keep your calendar in sync without the usual hassle.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <Link
@@ -98,27 +117,6 @@ export default function Dashboard() {
                     ))}
                 </div>
             </div>
-
-            {/*<div className="bg-gray-900 dark:bg-indigo-950 rounded-3xl p-8 sm:p-16 text-center text-white relative overflow-hidden">*/}
-            {/*    <div className="relative z-10">*/}
-            {/*        <h2 className="text-3xl font-bold mb-4">Never miss an event!</h2>*/}
-            {/*        <p className="text-gray-400 dark:text-indigo-200 mb-8 max-w-md mx-auto">*/}
-            {/*            Subscribe to our newsletter and get the latest updates on the most exciting events happening in your city.*/}
-            {/*        </p>*/}
-            {/*        <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">*/}
-            {/*            <input*/}
-            {/*                type="email"*/}
-            {/*                placeholder="Enter your email"*/}
-            {/*                className="flex-1 rounded-full bg-white/10 border border-white/20 px-6 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"*/}
-            {/*            />*/}
-            {/*            <button className="rounded-full bg-indigo-600 px-8 py-3 font-bold hover:bg-indigo-500 transition-all active:scale-95">*/}
-            {/*                Subscribe*/}
-            {/*            </button>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    <SparklesIcon className="absolute top-10 right-10 h-32 w-32 text-indigo-500/10 rotate-12" />*/}
-            {/*    <CalendarIcon className="absolute -bottom-10 -left-10 h-48 w-48 text-purple-500/10 -rotate-12" />*/}
-            {/*</div>*/}
         </div>
     );
 }

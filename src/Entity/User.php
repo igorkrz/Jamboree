@@ -10,6 +10,7 @@ use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
+use App\Enum\OAuthProvider;
 use App\Repository\UserRepository;
 use Deprecated;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -292,5 +293,11 @@ class User implements ResourceInterface, TimestampableInterface, UserInterface, 
         $this->oauthTokens->removeElement($oauthToken);
 
         return $this;
+    }
+
+    #[Groups(['user:read'])]
+    public function hasGoogleAccount(): bool
+    {
+        return $this->oauthTokens->exists(fn($key, UserOAuthToken $token) => $token->getProvider() === OAuthProvider::GOOGLE);
     }
 }
