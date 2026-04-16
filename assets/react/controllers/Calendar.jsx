@@ -270,7 +270,7 @@ export default function Calendar() {
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                             >
-                                <MenuItems className="absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-2xl bg-white dark:bg-gray-800 p-1.5 shadow-2xl ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none">
+                                <MenuItems className="absolute right-0 z-50 mt-2 w-max min-w-[14rem] origin-top-right rounded-2xl bg-white dark:bg-gray-800 p-1.5 shadow-2xl ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none">
                                     <div className="px-3 py-2 border-b border-gray-50 dark:border-gray-700 mb-1">
                                         <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">Select Format</p>
                                     </div>
@@ -281,7 +281,7 @@ export default function Calendar() {
                                                     onClick={() => handleExport(item.format)}
                                                     className={`${
                                                         active ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-200'
-                                                    } group flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition-colors`}
+                                                    } group flex w-full items-center rounded-xl px-3 py-2.5 text-sm transition-colors whitespace-nowrap`}
                                                 >
                                                     <item.icon className={`mr-3 h-5 w-5 ${active ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500'}`} />
                                                     {item.name}
