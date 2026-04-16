@@ -13,7 +13,7 @@ import {
     CalendarIcon, 
     ChevronDownIcon,
     TrashIcon,
-    InformationCircleIcon,
+    PlusIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Calendar() {
@@ -103,7 +103,7 @@ export default function Calendar() {
     const exportFormats = [
         { name: 'iCalendar (.ics)', icon: CalendarIcon, format: 'ics' },
         ...(user?.googleAccount ? [
-            { name: 'Google Calendar (Add)', icon: InformationCircleIcon, format: 'google' },
+            { name: 'Google Calendar (Add)', icon: PlusIcon, format: 'google' },
             { name: 'Google Calendar (Sync)', icon: ArrowPathIcon, format: 'google_sync' },
             { name: 'Google Calendar (Delete)', icon: TrashIcon, format: 'google_delete' },
         ] : []),
@@ -334,7 +334,7 @@ export default function Calendar() {
                                     return (
                                         <div className="flex items-center justify-between w-full cursor-pointer">
                                             <span className="font-semibold">{eventInfo.event.title}</span>
-                                            {googleUrl && (
+                                            {googleUrl && user?.googleAccount && (
                                                 <a 
                                                     href={googleUrl}
                                                     target="_blank"
@@ -343,7 +343,7 @@ export default function Calendar() {
                                                     className="ml-2 p-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
                                                     title="Add to Google Calendar"
                                                 >
-                                                    <InformationCircleIcon className="h-4 w-4" />
+                                                    <PlusIcon className="h-4 w-4 text-white" />
                                                 </a>
                                             )}
                                         </div>
@@ -360,7 +360,7 @@ export default function Calendar() {
                                                 {eventInfo.event.title}
                                             </div>
                                         </div>
-                                        {googleUrl && (
+                                        {googleUrl && user?.googleAccount && (
                                             <a 
                                                 href={googleUrl}
                                                 target="_blank"
@@ -369,7 +369,7 @@ export default function Calendar() {
                                                 className="hidden group-hover/event:flex ml-1 p-1 hover:bg-white/20 rounded-md transition-colors"
                                                 title="Add to Google Calendar"
                                             >
-                                                <InformationCircleIcon className="h-4 w-4 text-white" />
+                                                <PlusIcon className="h-4 w-4 text-white" />
                                             </a>
                                         )}
                                     </div>
@@ -496,12 +496,20 @@ export default function Calendar() {
                     border: none !important;
                     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
                     cursor: pointer;
-                    transition: transform 0.1s;
+                    transition: all 0.2s ease;
                 }
 
-                .calendar-container .fc-event:hover {
+                .calendar-container .fc-daygrid-event:hover {
                     transform: scale(1.02);
                     filter: brightness(1.1);
+                }
+
+                .calendar-container .fc-list-event:hover td {
+                    background-color: rgba(79, 70, 229, 0.05) !important;
+                }
+
+                .dark .calendar-container .fc-list-event:hover td {
+                    background-color: rgba(79, 70, 229, 0.1) !important;
                 }
 
                 .calendar-container .fc-list-day-cushion {
