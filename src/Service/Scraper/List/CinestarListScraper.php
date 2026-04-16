@@ -17,6 +17,12 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+use function base64_encode;
+use function json_encode;
+use function preg_match;
+use function str_replace;
+use function trim;
+
 final class CinestarListScraper implements ListScraperInterface
 {
     private const string URL = 'https://cinestarcinemas.hr/zagreb/';
@@ -47,11 +53,14 @@ final class CinestarListScraper implements ListScraperInterface
                     });
 
                     $link = $node->filter('a')->link()->getUri();
+                    $holdingDate = $node->filter('.najava')->text();
+                    preg_match('/\d{2}\.\d{2}\.\d{4}/', $holdingDate, $matches);
 
                     $itemData = [
                         'internalCode' => str_replace(self::URL, '', $link),
                         'name' => trim($nameNode->text()),
                         'link' => $link,
+                        'holdingDate' => $matches[0] ?? null,
                         'description' => $node->filter('p')->text(),
                         'imageUrl' => $node->filter('.img-fluid')->attr('src'),
                         'categories' => [['name' => 'Anime']],
