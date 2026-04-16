@@ -102,7 +102,7 @@ export default function Calendar() {
 
     const exportFormats = [
         { name: 'iCalendar (.ics)', icon: CalendarIcon, format: 'ics' },
-        ...(user?.hasGoogleAccount ? [
+        ...(user?.googleAccount ? [
             { name: 'Google Calendar (Add)', icon: InformationCircleIcon, format: 'google' },
             { name: 'Google Calendar (Sync)', icon: ArrowPathIcon, format: 'google_sync' },
             { name: 'Google Calendar (Delete)', icon: TrashIcon, format: 'google_delete' },
