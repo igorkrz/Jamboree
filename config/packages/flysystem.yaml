@@ -19,3 +19,10 @@ flysystem:
                 bucket: "%env(GOOGLE_BUCKET)%"
                 prefix: "images/custom_events"
                 visibility_handler: "flysystem.adapter.gcloud.visibility.uniform"
+        artists.storage:
+            adapter: 'gcloud'
+            options:
+                client: 'Google\Cloud\Storage\StorageClient'
+                bucket: "%env(GOOGLE_BUCKET)%"
+                prefix: "images/artists"
+                visibility_handler: "flysystem.adapter.gcloud.visibility.uniform"

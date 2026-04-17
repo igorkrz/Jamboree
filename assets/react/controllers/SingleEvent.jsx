@@ -4,12 +4,10 @@ import { useParams, Link } from "react-router-dom";
 import { 
     CalendarIcon, 
     MapPinIcon, 
-    BanknotesIcon, 
-    GlobeAltIcon,
+    BanknotesIcon,
     ArrowLeftIcon,
     InformationCircleIcon,
     TagIcon,
-    ClockIcon,
     UserCircleIcon
 } from "@heroicons/react/24/outline";
 
@@ -139,10 +137,16 @@ export default function SingleEvent() {
                                     {event.artists.map(artist => (
                                         <div key={artist.id} className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700">
                                             <div className="flex items-center mb-4">
-                                                <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mr-4">
-                                                    <UserCircleIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                                                <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mr-4 overflow-hidden">
+                                                    {artist.picture ? (
+                                                        <img src={`/images/artists/${artist.picture.fileName}`} alt={artist.name} className="h-full w-full object-cover" />
+                                                    ) : (
+                                                        <UserCircleIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                                                    )}
                                                 </div>
-                                                <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{artist.name}</span>
+                                                <Link to={`/artists/${artist.id}`} className="text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                                                    {artist.name}
+                                                </Link>
                                             </div>
                                             {artist.bio && (
                                                 <div className="text-gray-600 dark:text-gray-400 prose dark:prose-invert max-w-none text-sm leading-relaxed" 

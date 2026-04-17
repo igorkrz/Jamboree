@@ -13,6 +13,7 @@ final readonly class ArtistInfoDto
         public array $genres = [],
         public ?string $summary = null,
         public ?string $bio = null,
+        public ?string $imageUrl = null,
     ) {
     }
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use App\Api\Controller\GetArtistInfoController;
 use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TaggableInterface;
@@ -19,6 +22,12 @@ use Symfony\Component\Uid\Ulid;
 
 #[ORM\Entity(repositoryClass: ArtistRepository::class)]
 #[ORM\Table(name: 'artist')]
+#[ApiResource(
+    operations: [
+        new Get(controller: GetArtistInfoController::class),
+    ],
+    normalizationContext: ['groups' => ['artist:read', 'event:read']],
+)]
 class Artist implements ResourceInterface, TimestampableInterface, TaggableInterface
 {
     use IdentifiableTrait;
@@ -28,19 +37,25 @@ class Artist implements ResourceInterface, TimestampableInterface, TaggableInter
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[Groups(['event:read', 'artist:read'])]
     protected Ulid $id;
 
     #[ORM\Column(type: 'string', unique: true)]
-    #[Groups(['event:read'])]
+    #[Groups(['event:read', 'artist:read'])]
     protected string $name;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['event:read'])]
+    #[Groups(['event:read', 'artist:read'])]
     protected ?string $summary = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['event:read'])]
+    #[Groups(['event:read', 'artist:read'])]
     protected ?string $bio = null;
+
+    #[ORM\OneToOne(targetEntity: ArtistMediaObject::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'media_id', referencedColumnName: 'id', nullable: true)]
+    #[Groups(['event:read', 'artist:read'])]
+    protected ?ArtistMediaObject $picture = null;
 
     /**
      * @var Collection<array-key, Event>
@@ -50,6 +65,7 @@ class Artist implements ResourceInterface, TimestampableInterface, TaggableInter
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'artists', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinTable(name: 'artist_tag')]
+    #[Groups(['artist:read'])]
     protected Collection $tags;
 
     public function __construct(?Ulid $id = null)
@@ -91,6 +107,18 @@ class Artist implements ResourceInterface, TimestampableInterface, TaggableInter
     public function setBio(?string $bio): static
     {
         $this->bio = $bio;
+
+        return $this;
+    }
+
+    public function getPicture(): ?ArtistMediaObject
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(?ArtistMediaObject $picture = null): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }

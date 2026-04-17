@@ -9,6 +9,9 @@ liip_imagine:
         custom_events:
             flysystem:
                 filesystem_service: events.storage
+        artists:
+            flysystem:
+                filesystem_service: artists.storage
     resolvers:
         events:
             flysystem:
@@ -28,6 +31,12 @@ liip_imagine:
                 root_url: images/custom_events
                 cache_prefix: cache
                 visibility: private
+        artists:
+            flysystem:
+                filesystem_service: artists.storage
+                root_url: images/artists
+                cache_prefix: cache
+                visibility: private
     filter_sets:
         events:
             cache: events
@@ -35,6 +44,9 @@ liip_imagine:
         custom_events:
             cache: custom_events
             data_loader: custom_events
+        artists:
+            cache: artists
+            data_loader: artists
         events_xs:
             cache: events_xs
             data_loader: events

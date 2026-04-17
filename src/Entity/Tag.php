@@ -40,11 +40,11 @@ class Tag implements TimestampableInterface, ResourceInterface
     #[ORM\Id]
     #[ORM\Column(type: 'ulid')]
     #[ORM\GeneratedValue(strategy: 'NONE')]
-    #[Groups(['event:read', 'user_event:write', 'tag:read'])]
+    #[Groups(['event:read', 'user_event:write', 'tag:read', 'artist:read'])]
     protected Ulid $id;
 
     #[ORM\Column(type: 'string', unique: true)]
-    #[Groups(['event:read', 'custom_event:write', 'tag:read'])]
+    #[Groups(['event:read', 'custom_event:write', 'tag:read', 'artist:read'])]
     #[ApiProperty(
         openapiContext: [
             'type' => 'string',

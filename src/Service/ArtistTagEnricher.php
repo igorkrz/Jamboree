@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Artist;
 use App\Repository\ArtistRepository;
+use App\Service\Artist\LastFmService;
 use Psr\Log\LoggerInterface;
 
 final readonly class ArtistTagEnricher

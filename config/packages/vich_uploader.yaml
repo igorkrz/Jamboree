@@ -18,3 +18,10 @@ vich_uploader:
             namer:
                 service: vich_uploader.namer_property
                 options: { property: "id" }
+
+        artists:
+            uri_prefix: '%public_read_dir%/images/artists'
+            upload_destination: artists.storage
+            namer:
+                service: vich_uploader.namer_property
+                options: { property: "id" }

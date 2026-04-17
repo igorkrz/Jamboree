@@ -8,6 +8,7 @@ import SingleEvent from "./SingleEvent";
 import CustomEventCreate from "./CustomEventCreate";
 import SingleCustomEvent from "./SingleCustomEvent";
 import CustomEvents from "./CustomEvents";
+import SingleArtist from "./SingleArtist";
 import LoginForm from "../components/LoginForm";
 import RegistrationForm from "../components/RegistrationForm";
 import ResourceNotAvailable from "../components/ResourceNotAvailable";
@@ -24,6 +25,7 @@ export default function AppRoutes() {
             <Route path={'/events/:id'} element={<SingleEvent />}></Route>
             <Route path={'/custom_events'} element={<CustomEvents />}></Route>
             <Route path={'/custom_events/:id'} element={<SingleCustomEvent />}></Route>
+            <Route path={'/artists/:id'} element={<SingleArtist />}></Route>
             <Route path={'/custom_events/create'} element={<CustomEventCreate />}></Route>
             <Route path={'*'} element={<ResourceNotAvailable />}></Route>
         </Routes>

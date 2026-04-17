@@ -28,8 +28,6 @@ use Symfony\Component\HttpFoundation\File\File;
 
 final class EventConfigurator implements AutoMapperConfiguratorInterface
 {
-    private const string GOOGLE_BUCKET_URL = 'https://storage.googleapis.com/jamboree-eu';
-
     /** @var string[] */
     private const array FORMATS = [
         'Y-m-d',
@@ -93,8 +91,7 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
 
             $picture = $this->eventMediaObjectFactory->create();
             $picture->setFile($file);
-
-            $picture->setFilePath($this->getStorageFilePath($picture, $file));
+            $picture->setFilePath($this->mediaManager->getStorageFilePath($picture, $file));
 
             return $picture;
         });
@@ -162,15 +159,5 @@ final class EventConfigurator implements AutoMapperConfiguratorInterface
         };
 
         $mapping->forMember('tags', $tagOperation);
-    }
-
-    private function getStorageFilePath(EventMediaObject $picture, ?File $file = null): ?string
-    {
-        if (!$file instanceof File) {
-            return null;
-        }
-
-        return self::GOOGLE_BUCKET_URL . '/images/events/' .
-            $picture->getId() . '.' . $file->guessExtension();
     }
 }

@@ -8,6 +8,7 @@ use App\Entity\Contract\IdentifiableTrait;
 use App\Entity\Contract\ResourceInterface;
 use App\Entity\Contract\TimestampableInterface;
 use App\Entity\Contract\TimestampableTrait;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -23,18 +24,18 @@ abstract class MediaObject implements ResourceInterface, TimestampableInterface
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'ulid')]
-    #[Groups(['event:read', 'custom_event:read'])]
+    #[Groups(['event:read', 'custom_event:read', 'artist:read'])]
     protected Ulid $id;
 
     #[Vich\UploadableField(mapping: 'media_object', fileNameProperty: 'fileName')]
     protected ?File $file = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['event:read', 'custom_event:read', 'custom_event:write'])]
+    #[Groups(['event:read', 'custom_event:read', 'custom_event:write', 'artist:read'])]
     protected ?string $fileName = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
-    #[Groups(['event:read', 'custom_event:read', 'custom_event:write'])]
+    #[Groups(['event:read', 'custom_event:read', 'custom_event:write', 'artist:read'])]
     protected ?string $filePath = null;
 
     public function __construct(?Ulid $id = null)
@@ -50,7 +51,7 @@ abstract class MediaObject implements ResourceInterface, TimestampableInterface
     public function setFile(?File $file = null): static
     {
         if ($this->file !== $file) {
-            $this->updatedAt = new \DateTime();
+            $this->updatedAt = new DateTime();
 
             $this->file = $file;
         }

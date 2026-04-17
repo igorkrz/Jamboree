@@ -7,24 +7,24 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
-use App\Repository\EventMediaObjectRepository;
+use App\Repository\ArtistMediaObjectRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[Vich\Uploadable]
-#[ORM\Entity(repositoryClass: EventMediaObjectRepository::class)]
-#[ORM\Table(name: 'event_media_object')]
+#[ORM\Entity(repositoryClass: ArtistMediaObjectRepository::class)]
+#[ORM\Table(name: 'artist_media_object')]
 #[ApiResource(
     operations: [
         new GetCollection(),
         new Delete(),
     ],
-    normalizationContext: ['groups' => ['event:read']],
-    denormalizationContext: ['groups' => ['event:write']]
+    normalizationContext: ['groups' => ['artist:read']],
+    denormalizationContext: ['groups' => ['artist:write']]
 )]
-class EventMediaObject extends MediaObject
+class ArtistMediaObject extends MediaObject
 {
-    #[Vich\UploadableField(mapping: 'events', fileNameProperty: 'fileName')]
+    #[Vich\UploadableField(mapping: 'artists', fileNameProperty: 'fileName')]
     protected ?File $file = null;
 }
