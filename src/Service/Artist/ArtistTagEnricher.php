@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Artist;
 
 use App\Entity\Artist;
+use App\Entity\Tag;
 use App\Repository\ArtistRepository;
-use App\Service\Artist\LastFmService;
+use App\Repository\TagRepository;
 use Psr\Log\LoggerInterface;
 
 final readonly class ArtistTagEnricher
 {
     public function __construct(
         private ArtistRepository $artistRepository,
+        private TagRepository $tagRepository,
         private LastFmService $lastFmService,
-        private TagManager $tagManager,
         private LoggerInterface $logger,
     ) {
     }
@@ -37,7 +38,7 @@ final readonly class ArtistTagEnricher
             $this->logger->warning('No genres found for artist', ['name' => $artistName]);
         } else {
             foreach ($genres as $genre) {
-                $tag = $this->tagManager->getOrCreateTag($genre);
+                $tag = $this->getOrCreateTag($genre);
                 $artist->addTag($tag);
             }
 
@@ -66,5 +67,19 @@ final readonly class ArtistTagEnricher
         $artist->setName($artistName);
 
         return $artist;
+    }
+
+    private function getOrCreateTag(string $name): Tag
+    {
+        $name = trim($name);
+        $tag = $this->tagRepository->findOneBy(['name' => $name]);
+
+        if (!$tag) {
+            $tag = new Tag();
+            $tag->setName($name);
+            $this->tagRepository->add($tag);
+        }
+
+        return $tag;
     }
 }
